@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tutto Passa Studios</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍎</text></svg>" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='12' width='100' height='100' fill='%23669999'/><text x='50' y='68' font-size='52' font-weight='bold' fill='white' text-anchor='middle' font-family='sans-serif'>TP</text></svg>" />
     <link rel="stylesheet" href="/src/style.css" />
     <script src="https://unpkg.com/webamp@2.2.0/built/webamp.bundle.min.js"></script>
   </head>
@@ -13,15 +13,111 @@
     <!-- ════ MENU BAR ════ -->
     <div id="menu-bar">
       <div class="menu-left">
-        <span class="apple-logo" id="apple-menu">&#63743;</span>
-        <span class="menu-item">File</span>
-        <span class="menu-item">Edit</span>
-        <span class="menu-item">View</span>
-        <span class="menu-item">Special</span>
+
+        <div class="menu-trigger" data-menu="apple">
+          <span class="apple-logo">&#63743;</span>
+          <div class="dropdown-menu">
+            <div class="dropdown-item" data-action="about">About Tutto Passa...</div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item disabled">Control Panels</div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item" data-action="shutdown">Shut Down</div>
+            <div class="dropdown-item" data-action="restart">Restart</div>
+          </div>
+        </div>
+
+        <div class="menu-trigger" data-menu="file">
+          <span class="menu-label">File</span>
+          <div class="dropdown-menu">
+            <div class="dropdown-item disabled">New Folder <span class="shortcut">⌘N</span></div>
+            <div class="dropdown-item disabled">Open <span class="shortcut">⌘O</span></div>
+            <div class="dropdown-item" data-action="close-window">Close Window <span class="shortcut">⌘W</span></div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item disabled">Get Info <span class="shortcut">⌘I</span></div>
+          </div>
+        </div>
+
+        <div class="menu-trigger" data-menu="edit">
+          <span class="menu-label">Edit</span>
+          <div class="dropdown-menu">
+            <div class="dropdown-item disabled">Undo <span class="shortcut">⌘Z</span></div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item disabled">Cut <span class="shortcut">⌘X</span></div>
+            <div class="dropdown-item disabled">Copy <span class="shortcut">⌘C</span></div>
+            <div class="dropdown-item disabled">Paste <span class="shortcut">⌘V</span></div>
+            <div class="dropdown-item disabled">Select All <span class="shortcut">⌘A</span></div>
+          </div>
+        </div>
+
+        <div class="menu-trigger" data-menu="view">
+          <span class="menu-label">View</span>
+          <div class="dropdown-menu">
+            <div class="dropdown-item disabled">as Icons</div>
+            <div class="dropdown-item disabled">as List</div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item disabled">Clean Up</div>
+          </div>
+        </div>
+
+        <div class="menu-trigger" data-menu="special">
+          <span class="menu-label">Special</span>
+          <div class="dropdown-menu">
+            <div class="dropdown-item disabled">Empty Trash...</div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item" data-action="restart">Restart</div>
+            <div class="dropdown-item" data-action="shutdown">Shut Down</div>
+          </div>
+        </div>
+
       </div>
       <div class="menu-right">
         <span id="menu-clock"></span>
       </div>
+    </div>
+
+    <!-- ════ BOOT SCREEN ════ -->
+    <div id="boot-screen">
+      <div id="boot-icon">TP</div>
+      <div id="boot-text">Welcome to Tutto Passa</div>
+      <div id="boot-progress"><div id="boot-progress-bar"></div></div>
+    </div>
+
+    <!-- ════ MODAL OVERLAY ════ -->
+    <div id="modal-overlay" class="hidden"></div>
+
+    <!-- ════ ABOUT DIALOG ════ -->
+    <div id="about-dialog" class="mac-dialog hidden">
+      <div class="dialog-body">
+        <div class="about-icon">TP</div>
+        <div class="about-info">
+          <h2>Tutto Passa Studios</h2>
+          <p class="about-version">TuttoPassa OS 1.0</p>
+          <p class="about-tagline">~ Everything Passes ~</p>
+          <div class="about-stats">
+            <p>Built-in Memory: ∞ MB</p>
+            <p>Virtual Memory: Vibes Only</p>
+            <p>Largest Unused Block: Unlimited Creativity</p>
+          </div>
+          <p class="about-description">A creative studio where music, design, and code converge.</p>
+        </div>
+      </div>
+      <div class="dialog-buttons">
+        <button class="mac-button default-btn" data-action="close-about">OK</button>
+      </div>
+    </div>
+
+    <!-- ════ ALERT DIALOG ════ -->
+    <div id="alert-dialog" class="mac-dialog hidden">
+      <div class="dialog-body">
+        <div class="alert-icon"></div>
+        <div class="alert-message"></div>
+      </div>
+      <div class="dialog-buttons alert-buttons"></div>
+    </div>
+
+    <!-- ════ SHUT DOWN SCREEN ════ -->
+    <div id="shutdown-screen" class="hidden">
+      <p>It is now safe to turn off<br>your computer.</p>
     </div>
 
     <!-- ════ DESKTOP ════ -->

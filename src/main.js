@@ -34,6 +34,7 @@ function bringToFront(win) {
 function initWindowDragging() {
   document.querySelectorAll('.window-title-bar').forEach(titleBar => {
     const win = titleBar.closest('.mac-window');
+    if (!win || win.closest('.mac-dialog')) return;
     let isDragging = false;
     let startX, startY, origLeft, origTop;
 
@@ -95,6 +96,7 @@ function initWindowDragging() {
   });
 
   document.querySelectorAll('.mac-window').forEach(win => {
+    if (win.closest('.mac-dialog')) return;
     win.addEventListener('mousedown', () => bringToFront(win));
   });
 }
@@ -159,6 +161,174 @@ function updateClock() {
   el.textContent = `${day} ${hours}:${minutes} ${ampm}`;
 }
 
+// ─── Dropdown Menu System ─────────────────────────────────────
+let menuOpen = false;
+
+function closeAllMenus() {
+  document.querySelectorAll('.menu-trigger.open').forEach(t => t.classList.remove('open'));
+  menuOpen = false;
+}
+
+function openMenu(trigger) {
+  closeAllMenus();
+  trigger.classList.add('open');
+  menuOpen = true;
+}
+
+function initMenuSystem() {
+  const triggers = document.querySelectorAll('.menu-trigger');
+
+  triggers.forEach(trigger => {
+    // Click to open/close
+    trigger.addEventListener('mousedown', (e) => {
+      if (e.target.closest('.dropdown-menu')) return;
+      e.preventDefault();
+      if (trigger.classList.contains('open')) {
+        closeAllMenus();
+      } else {
+        openMenu(trigger);
+      }
+    });
+
+    // Hover to switch when a menu is already open
+    trigger.addEventListener('mouseenter', () => {
+      if (menuOpen && !trigger.classList.contains('open')) {
+        openMenu(trigger);
+      }
+    });
+  });
+
+  // Click outside closes menus
+  document.addEventListener('mousedown', (e) => {
+    if (!e.target.closest('.menu-trigger') && menuOpen) {
+      closeAllMenus();
+    }
+  });
+
+  // Handle menu item clicks (mouseup for classic Mac feel)
+  document.addEventListener('mouseup', (e) => {
+    const item = e.target.closest('.dropdown-item');
+    if (!item || item.classList.contains('disabled')) return;
+    const action = item.dataset.action;
+    closeAllMenus();
+    if (action) handleMenuAction(action);
+  });
+
+  // Touch support: tap items
+  document.addEventListener('touchend', (e) => {
+    const item = e.target.closest('.dropdown-item');
+    if (!item || item.classList.contains('disabled')) return;
+    const action = item.dataset.action;
+    closeAllMenus();
+    if (action) handleMenuAction(action);
+  });
+}
+
+// ─── Menu Actions ─────────────────────────────────────────────
+function handleMenuAction(action) {
+  switch (action) {
+    case 'about':
+      openAboutDialog();
+      break;
+    case 'close-window': {
+      const active = document.querySelector('.mac-window.active:not(.mac-dialog)');
+      if (active) {
+        active.classList.add('hidden');
+        active.classList.remove('active');
+      }
+      break;
+    }
+    case 'shutdown':
+      showAlert({
+        icon: '⚠️',
+        message: 'Are you sure you want to shut down your computer now?',
+        buttons: [
+          { label: 'Cancel' },
+          { label: 'Shut Down', action: doShutDown, isDefault: true },
+        ],
+      });
+      break;
+    case 'restart':
+      showAlert({
+        icon: '🔄',
+        message: 'Are you sure you want to restart your computer now?',
+        buttons: [
+          { label: 'Cancel' },
+          { label: 'Restart', action: () => location.reload(), isDefault: true },
+        ],
+      });
+      break;
+  }
+}
+
+// ─── About Dialog ─────────────────────────────────────────────
+function openAboutDialog() {
+  document.getElementById('modal-overlay').classList.remove('hidden');
+  document.getElementById('about-dialog').classList.remove('hidden');
+}
+
+function closeAboutDialog() {
+  document.getElementById('about-dialog').classList.add('hidden');
+  document.getElementById('modal-overlay').classList.add('hidden');
+}
+
+function initAboutDialog() {
+  document.querySelector('[data-action="close-about"]').addEventListener('click', closeAboutDialog);
+  document.getElementById('modal-overlay').addEventListener('click', closeAboutDialog);
+}
+
+// ─── Reusable Alert System ────────────────────────────────────
+function showAlert({ icon, message, buttons }) {
+  const dialog = document.getElementById('alert-dialog');
+  const overlay = document.getElementById('modal-overlay');
+
+  // Close about dialog first if it's open
+  document.getElementById('about-dialog').classList.add('hidden');
+
+  dialog.querySelector('.alert-icon').textContent = icon || '⚠️';
+  dialog.querySelector('.alert-message').textContent = message;
+
+  const btnContainer = dialog.querySelector('.alert-buttons');
+  btnContainer.innerHTML = '';
+
+  buttons.forEach(btn => {
+    const el = document.createElement('button');
+    el.className = 'mac-button' + (btn.isDefault ? ' default-btn' : '');
+    el.textContent = btn.label;
+    el.addEventListener('click', () => {
+      closeAlert();
+      if (btn.action) btn.action();
+    });
+    btnContainer.appendChild(el);
+  });
+
+  overlay.classList.remove('hidden');
+  dialog.classList.remove('hidden');
+}
+
+function closeAlert() {
+  document.getElementById('alert-dialog').classList.add('hidden');
+  document.getElementById('modal-overlay').classList.add('hidden');
+}
+
+// ─── Shut Down ────────────────────────────────────────────────
+function doShutDown() {
+  const desktop = document.getElementById('desktop');
+  const menuBar = document.getElementById('menu-bar');
+  const shutdownScreen = document.getElementById('shutdown-screen');
+
+  desktop.style.display = 'none';
+  menuBar.style.display = 'none';
+  shutdownScreen.classList.remove('hidden');
+
+  // Clear the boot session so next visit boots again
+  sessionStorage.removeItem('tuttopassa-booted');
+
+  shutdownScreen.addEventListener('click', () => {
+    location.reload();
+  }, { once: true });
+}
+
 // ─── Webamp Init ──────────────────────────────────────────────
 function initWebamp() {
   const Webamp = window.Webamp;
@@ -180,16 +350,68 @@ function initWebamp() {
   webamp.renderWhenReady(document.getElementById('webamp-container'));
 }
 
-// ─── Boot ─────────────────────────────────────────────────────
+// ─── Boot Sequence ────────────────────────────────────────────
+function runBootSequence(onComplete) {
+  const bootScreen = document.getElementById('boot-screen');
+  const bootText = document.getElementById('boot-text');
+  const bootProgress = document.getElementById('boot-progress');
+  const bootBar = document.getElementById('boot-progress-bar');
+
+  // Phase 1: Show TP icon (already visible)
+  setTimeout(() => {
+    // Phase 2: Show welcome text
+    bootText.classList.add('visible');
+
+    setTimeout(() => {
+      // Phase 3: Show and fill progress bar
+      bootProgress.classList.add('visible');
+
+      requestAnimationFrame(() => {
+        bootBar.style.width = '100%';
+      });
+
+      setTimeout(() => {
+        // Phase 4: Fade out
+        bootScreen.classList.add('fade-out');
+
+        setTimeout(() => {
+          bootScreen.classList.add('hidden');
+          bootScreen.classList.remove('fade-out');
+          onComplete();
+        }, 500);
+      }, 1800);
+    }, 800);
+  }, 1200);
+}
+
+// ─── Main Init ────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  // Clock starts immediately (visible during boot via menu bar... but menu bar is under boot screen)
   updateClock();
   setInterval(updateClock, 10000);
 
-  initWindowDragging();
-  initWindowControls();
-  initDesktopIcons();
-  initWebamp();
+  const shouldBoot = !sessionStorage.getItem('tuttopassa-booted');
 
-  const finderWindow = document.getElementById('finder-window');
-  if (finderWindow) bringToFront(finderWindow);
+  function initDesktop() {
+    initWindowDragging();
+    initWindowControls();
+    initDesktopIcons();
+    initMenuSystem();
+    initAboutDialog();
+    initWebamp();
+
+    const finderWindow = document.getElementById('finder-window');
+    if (finderWindow) bringToFront(finderWindow);
+  }
+
+  if (shouldBoot) {
+    runBootSequence(() => {
+      sessionStorage.setItem('tuttopassa-booted', '1');
+      initDesktop();
+    });
+  } else {
+    // Skip boot — hide boot screen immediately and init
+    document.getElementById('boot-screen').classList.add('hidden');
+    initDesktop();
+  }
 });
