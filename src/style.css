@@ -193,6 +193,7 @@ html, body {
   flex-direction: column;
   min-width: 200px;
   min-height: 100px;
+  max-width: calc(100vw - 16px);
   z-index: 100;
 }
 
@@ -294,6 +295,7 @@ html, body {
   padding: 8px;
   background: #ddd;
   min-height: 200px;
+  overflow: hidden;
 }
 
 /* --- Content Styles --- */
@@ -438,10 +440,24 @@ button:active, .mac-button:active {
 #webamp-container {
   position: relative;
   width: 100%;
+  overflow: hidden;
 }
 
 #webamp {
   position: relative !important;
+}
+
+/* --- Responsive: Tablet (768–1023px) --- */
+@media (max-width: 1023px) and (min-width: 768px) {
+  #finder-window {
+    width: min(520px, calc(100vw - 120px)) !important;
+  }
+
+  #webamp-window {
+    left: 40px !important;
+    top: auto !important;
+    width: 290px !important;
+  }
 }
 
 /* --- Responsive: Mobile (<768px) --- */
