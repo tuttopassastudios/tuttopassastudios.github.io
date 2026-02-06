@@ -15,8 +15,10 @@ const INITIAL_TRACKS = [
 // ─── Skin Library ─────────────────────────────────────────────
 // Drop .wsz files into public/skins/ and add entries here.
 const SKIN_LIBRARY = [
-  // { url: '/skins/SomeSkin.wsz', name: 'Some Skin' },
-  // { url: '/skins/Another.wsz', name: 'Another' },
+  { url: '/skins/For_The_Birds.wsz', name: 'For The Birds' },
+  { url: '/skins/dexter_amp.wsz', name: 'Dexter Amp' },
+  { url: '/skins/slimshdy.wsz', name: 'Slim Shady' },
+  { url: '/skins/the_Neverhood_amp.wsz', name: 'The Neverhood' },
 ];
 
 // ─── Window Management ───────────────────────────────────────
