@@ -12,6 +12,12 @@ const INITIAL_TRACKS = [
   },
 ];
 
+// ─── Video Library ────────────────────────────────────────────
+// Drop .mp4 files into public/video/ and add entries here.
+const VIDEO_LIBRARY = [
+  { url: '/video/RING LOGO TUTTO PASSA 01.mp4', title: 'Ring Logo Tutto Passa 01' },
+];
+
 // ─── Skin Library ─────────────────────────────────────────────
 // Drop .wsz files into public/skins/ and add entries here.
 const SKIN_LIBRARY = [
@@ -108,6 +114,16 @@ function initWindowControls() {
       const win = btn.closest('.mac-window');
       win.classList.add('hidden');
       win.classList.remove('active');
+
+      // Stop video when TV window is closed
+      if (win.id === 'tv-window') {
+        const video = document.getElementById('tv-player');
+        if (video) {
+          video.pause();
+          video.removeAttribute('src');
+          video.load();
+        }
+      }
     });
   });
 
@@ -235,6 +251,14 @@ function handleMenuAction(action) {
       if (active) {
         active.classList.add('hidden');
         active.classList.remove('active');
+        if (active.id === 'tv-window') {
+          const video = document.getElementById('tv-player');
+          if (video) {
+            video.pause();
+            video.removeAttribute('src');
+            video.load();
+          }
+        }
       }
       break;
     }
@@ -329,6 +353,31 @@ function doShutDown() {
   }, { once: true });
 }
 
+// ─── Video List Init ──────────────────────────────────────────
+function initVideoList() {
+  const listEl = document.getElementById('video-list');
+  if (!listEl) return;
+
+  VIDEO_LIBRARY.forEach(entry => {
+    const item = document.createElement('div');
+    item.className = 'video-list-item';
+    item.textContent = entry.title;
+    item.addEventListener('click', () => {
+      const tvWin = document.getElementById('tv-window');
+      const video = document.getElementById('tv-player');
+      if (!tvWin || !video) return;
+
+      video.src = entry.url;
+      video.load();
+      tvWin.querySelector('.title-bar-text').textContent = entry.title;
+      tvWin.classList.remove('hidden');
+      bringToFront(tvWin);
+      video.play();
+    });
+    listEl.appendChild(item);
+  });
+}
+
 // ─── Webamp Init ──────────────────────────────────────────────
 function initWebamp() {
   const Webamp = window.Webamp;
@@ -403,6 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initDesktopIcons();
     initMenuSystem();
     initAboutDialog();
+    initVideoList();
     initWebamp();
 
     const finderWindow = document.getElementById('finder-window');

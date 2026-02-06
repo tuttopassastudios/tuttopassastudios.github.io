@@ -129,6 +129,10 @@
           <div class="icon-image icon-hd"></div>
           <span class="icon-label">Tutto Passa HD</span>
         </div>
+        <div class="desktop-icon" data-window="videos-window">
+          <div class="icon-image icon-folder"></div>
+          <span class="icon-label">Videos</span>
+        </div>
         <div class="desktop-icon" data-window="">
           <div class="icon-image icon-trash"></div>
           <span class="icon-label">Trash</span>
@@ -153,6 +157,38 @@
           </div>
 
           <div class="content-divider"></div>
+        </div>
+      </div>
+
+      <!-- ─── Videos Folder Window ─── -->
+      <div class="mac-window hidden" id="videos-window" style="left:80px;top:80px;width:340px;">
+        <div class="window-title-bar">
+          <div class="title-btn close-btn"></div>
+          <div class="title-bar-text">Videos</div>
+          <div class="title-btn zoom-btn"></div>
+        </div>
+        <div class="window-content">
+          <div id="video-list"></div>
+        </div>
+      </div>
+
+      <!-- ─── Retro TV Window ─── -->
+      <div class="mac-window hidden" id="tv-window" style="left:120px;top:60px;width:580px;">
+        <div class="window-title-bar">
+          <div class="title-btn close-btn"></div>
+          <div class="title-bar-text">TV</div>
+          <div class="title-btn zoom-btn"></div>
+        </div>
+        <div class="window-content tv-content">
+          <div class="crt-tv">
+            <div class="crt-screen">
+              <video id="tv-player" controls>
+                <source src="" type="video/mp4">
+              </video>
+              <div class="crt-overlay"></div>
+              <div class="crt-scanlines"></div>
+            </div>
+          </div>
         </div>
       </div>
 
