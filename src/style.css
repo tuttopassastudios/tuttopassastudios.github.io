@@ -27,8 +27,27 @@ html, body {
   -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: unset;
   color: #000;
-  cursor: default;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='24' viewBox='0 0 16 24'%3E%3Cpath d='M0 0 L0 17 L4 13 L7 20 L10 19 L7 12 L12 12 Z' fill='black' stroke='white' stroke-width='1'/%3E%3C/svg%3E") 0 0, default;
   user-select: none;
+}
+
+/* Pointer hand for interactive elements */
+.dropdown-item:not(.disabled),
+.desktop-icon,
+button,
+.mac-button,
+.close-btn,
+.zoom-btn,
+.apple-logo,
+.menu-label,
+.video-list-item {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='24' viewBox='0 0 16 24'%3E%3Cpath d='M5 0 L5 8 L2 8 L2 12 L0 12 L0 18 L4 22 L14 22 L16 18 L16 12 L12 12 L12 4 L9 4 L9 8 L7 8 L7 2 Z' fill='black' stroke='white' stroke-width='0.5'/%3E%3C/svg%3E") 6 0, pointer;
+}
+
+/* Wait cursor during boot */
+body.cursor-wait,
+body.cursor-wait * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M8 3 L8 8 L12 8' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 8 8, wait !important;
 }
 
 /* --- Menu Bar --- */
@@ -135,7 +154,7 @@ html, body {
 /* --- Desktop --- */
 #desktop {
   position: fixed;
-  top: 20px;
+  top: 37px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -386,16 +405,6 @@ html, body {
   height: 1px;
   background: #999;
   margin: 12px 0;
-}
-
-.under-construction {
-  text-align: center;
-  padding: 6px;
-  border: 1px solid #000;
-  background: #ffffcc;
-  font-weight: bold;
-  font-size: 11px;
-  margin-bottom: 8px;
 }
 
 /* --- Video List (Finder list-view) --- */
@@ -748,6 +757,145 @@ button:active, .mac-button:active {
   display: none;
 }
 
+/* --- Retro Blink & Marquee Utilities --- */
+@keyframes retro-blink {
+  0%, 100% { visibility: visible; }
+  50% { visibility: hidden; }
+}
+
+.blink {
+  animation: retro-blink 1s step-start infinite;
+}
+
+@keyframes retro-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-content {
+  display: inline-block;
+  animation: retro-marquee 20s linear infinite;
+}
+
+/* --- Hit Counter (menu bar) --- */
+#hit-counter {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  background: #000;
+  color: #00ff00;
+  padding: 1px 6px;
+  border: 1px inset #444;
+  letter-spacing: 1px;
+  margin-right: 8px;
+  image-rendering: pixelated;
+}
+
+/* --- Ticker Bar --- */
+#ticker-bar {
+  position: fixed;
+  top: 20px;
+  left: 0;
+  right: 0;
+  height: 17px;
+  background: #000;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 17px;
+  z-index: 9999;
+  border-bottom: 1px solid #333;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#ticker-bar .marquee-content {
+  padding-right: 50px;
+}
+
+/* --- Click to Start Overlay --- */
+#click-to-start {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #000;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+#click-to-start.hidden {
+  display: none;
+}
+
+#click-to-start p {
+  color: #aaa;
+  font-size: 18px;
+  font-family: 'Chicago', 'Geneva', sans-serif;
+}
+
+/* --- Mouse Trail Dots --- */
+.mouse-trail-dot {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background: #669999;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99989;
+  opacity: 0;
+  will-change: opacity, transform;
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* --- Screensaver Canvas --- */
+#screensaver {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99990;
+  background: #000;
+}
+
+#screensaver.hidden {
+  display: none;
+}
+
+/* --- Enhanced Under Construction --- */
+.under-construction {
+  text-align: center;
+  padding: 8px 12px;
+  border: 2px solid #000;
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      #ffcc00,
+      #ffcc00 10px,
+      #000 10px,
+      #000 20px
+    );
+  font-weight: bold;
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+
+.under-construction-inner {
+  background: #ffffcc;
+  padding: 6px 10px;
+  border: 1px solid #000;
+  display: inline-block;
+}
+
 /* --- Responsive: Tablet (768–1023px) --- */
 @media (max-width: 1023px) and (min-width: 768px) {
   #finder-window {
@@ -757,6 +905,10 @@ button:active, .mac-button:active {
 
 /* --- Responsive: Mobile (<768px) --- */
 @media (max-width: 767px) {
+  #hit-counter {
+    display: none;
+  }
+
   #desktop-icons {
     display: none;
   }

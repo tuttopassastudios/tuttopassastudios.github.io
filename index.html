@@ -71,8 +71,24 @@
 
       </div>
       <div class="menu-right">
+        <span id="hit-counter"></span>
         <span id="menu-clock"></span>
       </div>
+    </div>
+
+    <!-- ════ TICKER BAR ════ -->
+    <div id="ticker-bar">
+      <div class="marquee-track">
+        <span class="marquee-content">
+          ★ Welcome to Tutto Passa Studios ★ Music · Design · Code ★ Now accepting new clients — inquire within ★ "Everything Passes" ★ Check out our latest tracks in the Webamp player ★ Site best viewed at 1024×768 ★ You are visitor #<span class="ticker-counter"></span> ★ Tutto Passa Studios © 2025 ★&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          ★ Welcome to Tutto Passa Studios ★ Music · Design · Code ★ Now accepting new clients — inquire within ★ "Everything Passes" ★ Check out our latest tracks in the Webamp player ★ Site best viewed at 1024×768 ★ You are visitor #<span class="ticker-counter"></span> ★ Tutto Passa Studios © 2025 ★&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </span>
+      </div>
+    </div>
+
+    <!-- ════ CLICK TO START ════ -->
+    <div id="click-to-start" class="hidden">
+      <p class="blink">Click to Start</p>
     </div>
 
     <!-- ════ BOOT SCREEN ════ -->
@@ -120,6 +136,9 @@
       <p>It is now safe to turn off<br>your computer.</p>
     </div>
 
+    <!-- ════ SCREENSAVER ════ -->
+    <canvas id="screensaver" class="hidden"></canvas>
+
     <!-- ════ DESKTOP ════ -->
     <div id="desktop">
 
@@ -153,7 +172,9 @@
           <div class="content-divider"></div>
 
           <div class="under-construction">
-            <span>&#9888;</span> This site is under construction. Pardon our dust! <span>&#9888;</span>
+            <span class="under-construction-inner">
+              <span class="blink">🚧</span> This site is under construction. Pardon our dust! <span class="blink">🚧</span>
+            </span>
           </div>
 
           <div class="content-divider"></div>

@@ -358,10 +358,16 @@ function closeAlert() {
 function doShutDown() {
   const desktop = document.getElementById('desktop');
   const menuBar = document.getElementById('menu-bar');
+  const ticker = document.getElementById('ticker-bar');
   const shutdownScreen = document.getElementById('shutdown-screen');
+
+  // Stop screensaver if active
+  if (screensaverActive) stopScreenSaver();
+  clearTimeout(idleTimer);
 
   desktop.style.display = 'none';
   menuBar.style.display = 'none';
+  if (ticker) ticker.style.display = 'none';
   shutdownScreen.classList.remove('hidden');
 
   // Clear the boot session so next visit boots again
@@ -430,6 +436,8 @@ function runBootSequence(onComplete) {
   const bootProgress = document.getElementById('boot-progress');
   const bootBar = document.getElementById('boot-progress-bar');
 
+  document.body.classList.add('cursor-wait');
+
   // Phase 1: Show TP icon (already visible)
   setTimeout(() => {
     // Phase 2: Show welcome text
@@ -450,6 +458,7 @@ function runBootSequence(onComplete) {
         setTimeout(() => {
           bootScreen.classList.add('hidden');
           bootScreen.classList.remove('fade-out');
+          document.body.classList.remove('cursor-wait');
           onComplete();
         }, 500);
       }, 1800);
@@ -457,9 +466,163 @@ function runBootSequence(onComplete) {
   }, 1200);
 }
 
+// ─── Screen Saver ─────────────────────────────────────────────
+let screensaverActive = false;
+const IDLE_TIMEOUT = 3 * 60 * 1000; // 3 minutes
+let idleTimer = null;
+let ssAnimFrame = null;
+
+function startScreenSaver() {
+  if (window.innerWidth < 768) return;
+
+  const canvas = document.getElementById('screensaver');
+  if (!canvas) return;
+
+  canvas.classList.remove('hidden');
+  screensaverActive = true;
+
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const text = 'TP';
+  const fontSize = 60;
+  ctx.font = `bold ${fontSize}px 'Geneva', sans-serif`;
+  const textWidth = ctx.measureText(text).width;
+  const textHeight = fontSize;
+
+  let x = Math.random() * (canvas.width - textWidth);
+  let y = Math.random() * (canvas.height - textHeight) + textHeight;
+  let dx = 2;
+  let dy = 2;
+
+  const colors = ['#669999', '#ff6666', '#66cc66', '#cc66cc', '#ffcc33', '#6699ff', '#ff9933'];
+  let colorIndex = 0;
+
+  function animate() {
+    // Trail fade effect
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.font = `bold ${fontSize}px 'Geneva', sans-serif`;
+    ctx.fillStyle = colors[colorIndex];
+    ctx.fillText(text, x, y);
+
+    x += dx;
+    y += dy;
+
+    // Bounce off walls
+    if (x + textWidth >= canvas.width || x <= 0) {
+      dx = -dx;
+      colorIndex = (colorIndex + 1) % colors.length;
+    }
+    if (y >= canvas.height || y - textHeight <= 0) {
+      dy = -dy;
+      colorIndex = (colorIndex + 1) % colors.length;
+    }
+
+    ssAnimFrame = requestAnimationFrame(animate);
+  }
+
+  animate();
+}
+
+function stopScreenSaver() {
+  const canvas = document.getElementById('screensaver');
+  if (canvas) canvas.classList.add('hidden');
+  screensaverActive = false;
+  if (ssAnimFrame) {
+    cancelAnimationFrame(ssAnimFrame);
+    ssAnimFrame = null;
+  }
+  resetIdleTimer();
+}
+
+function resetIdleTimer() {
+  clearTimeout(idleTimer);
+  if (window.innerWidth < 768) return;
+  idleTimer = setTimeout(startScreenSaver, IDLE_TIMEOUT);
+}
+
+function initScreenSaver() {
+  if (window.innerWidth < 768) return;
+
+  const dismiss = () => {
+    if (screensaverActive) stopScreenSaver();
+    else resetIdleTimer();
+  };
+
+  document.addEventListener('mousemove', dismiss);
+  document.addEventListener('mousedown', dismiss);
+  document.addEventListener('keydown', dismiss);
+
+  resetIdleTimer();
+}
+
+// ─── Mouse Trails ─────────────────────────────────────────────
+function initMouseTrails() {
+  // Skip on touch/mobile devices
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+
+  const POOL_SIZE = 20;
+  const THROTTLE_MS = 50;
+  const dots = [];
+
+  for (let i = 0; i < POOL_SIZE; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'mouse-trail-dot';
+    document.body.appendChild(dot);
+    dots.push(dot);
+  }
+
+  let index = 0;
+  let lastTime = 0;
+
+  document.addEventListener('mousemove', (e) => {
+    if (screensaverActive) return;
+
+    const now = Date.now();
+    if (now - lastTime < THROTTLE_MS) return;
+    lastTime = now;
+
+    const dot = dots[index % POOL_SIZE];
+    index++;
+
+    // Reset and position
+    dot.style.transition = 'none';
+    dot.style.opacity = '0.8';
+    dot.style.transform = 'scale(1)';
+    dot.style.left = (e.clientX - 4) + 'px';
+    dot.style.top = (e.clientY - 4) + 'px';
+
+    // Force reflow then animate out
+    dot.offsetHeight;
+    dot.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+    dot.style.opacity = '0';
+    dot.style.transform = 'scale(0.2)';
+  });
+}
+
+// ─── Hit Counter ──────────────────────────────────────────────
+function initHitCounter() {
+  const BASE = 13827;
+  let visits = parseInt(localStorage.getItem('tuttopassa-hits') || '0', 10);
+  visits += 1;
+  localStorage.setItem('tuttopassa-hits', String(visits));
+  const count = String(BASE + visits).padStart(6, '0');
+
+  const el = document.getElementById('hit-counter');
+  if (el) el.textContent = count;
+
+  // Also update ticker bar visitor counters
+  document.querySelectorAll('.ticker-counter').forEach(s => {
+    s.textContent = count;
+  });
+}
+
 // ─── Main Init ────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // Clock starts immediately (visible during boot via menu bar... but menu bar is under boot screen)
+  // Clock starts immediately
   updateClock();
   setInterval(updateClock, 10000);
 
@@ -473,18 +636,33 @@ document.addEventListener('DOMContentLoaded', () => {
     initAboutDialog();
     initVideoList();
     initWebamp();
+    initHitCounter();
+    initMouseTrails();
+    initScreenSaver();
 
     const finderWindow = document.getElementById('finder-window');
     if (finderWindow) bringToFront(finderWindow);
   }
 
   if (shouldBoot) {
-    runBootSequence(() => {
-      sessionStorage.setItem('tuttopassa-booted', '1');
-      initDesktop();
-    });
+    // First visit — show click-to-start overlay
+    const overlay = document.getElementById('click-to-start');
+    overlay.classList.remove('hidden');
+
+    overlay.addEventListener('click', () => {
+      // Play startup chime (satisfies autoplay policy)
+      const chime = new Audio('/audio/startup.mp3');
+      chime.play().catch(() => {});
+
+      overlay.classList.add('hidden');
+
+      runBootSequence(() => {
+        sessionStorage.setItem('tuttopassa-booted', '1');
+        initDesktop();
+      });
+    }, { once: true });
   } else {
-    // Skip boot — hide boot screen immediately and init
+    // Revisit — skip click-to-start and boot
     document.getElementById('boot-screen').classList.add('hidden');
     initDesktop();
   }
