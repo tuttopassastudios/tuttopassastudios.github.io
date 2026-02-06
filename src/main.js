@@ -155,6 +155,12 @@ function initWindowControls() {
           video.load();
         }
       }
+
+      // Unload game when game window is closed
+      if (win.id === 'game-window') {
+        const embed = document.getElementById('game-embed');
+        if (embed) embed.innerHTML = '';
+      }
     });
   });
 
@@ -191,6 +197,11 @@ function initDesktopIcons() {
       win.classList.remove('hidden');
       win.classList.remove('fullscreen');
       bringToFront(win);
+
+      // Load game SWF when game window is opened
+      if (targetId === 'game-window') {
+        loadGame();
+      }
     });
   });
 
@@ -296,6 +307,10 @@ function handleMenuAction(action) {
             video.removeAttribute('src');
             video.load();
           }
+        }
+        if (active.id === 'game-window') {
+          const embed = document.getElementById('game-embed');
+          if (embed) embed.innerHTML = '';
         }
       }
       break;
@@ -420,6 +435,21 @@ function initVideoList() {
     });
     listEl.appendChild(item);
   });
+}
+
+// ─── Game Loader ──────────────────────────────────────────────
+function loadGame() {
+  const container = document.getElementById('game-embed');
+  if (!container || container.querySelector('ruffle-embed')) return;
+
+  const ruffle = window.RufflePlayer?.newest();
+  if (!ruffle) return;
+
+  const player = ruffle.createPlayer();
+  player.style.width = '100%';
+  player.style.height = '100%';
+  container.appendChild(player);
+  player.load('/games/ha3miniclip.swf');
 }
 
 // ─── Webamp Init ──────────────────────────────────────────────

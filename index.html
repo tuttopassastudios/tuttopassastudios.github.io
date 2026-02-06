@@ -7,6 +7,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='12' width='100' height='100' fill='%23669999'/><text x='50' y='68' font-size='52' font-weight='bold' fill='white' text-anchor='middle' font-family='sans-serif'>TP</text></svg>" />
     <link rel="stylesheet" href="/src/style.css" />
     <script src="https://unpkg.com/webamp@2.2.0/built/webamp.bundle.min.js"></script>
+    <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
   </head>
   <body>
 
@@ -19,7 +20,9 @@
           <div class="dropdown-menu">
             <div class="dropdown-item" data-action="about">About Tutto Passa...</div>
             <div class="dropdown-divider"></div>
-            <div class="dropdown-item disabled">Control Panels</div>
+            <div class="dropdown-item" data-action="control-panels">Control Panels</div>
+            <div class="dropdown-item" data-action="chooser">Chooser...</div>
+            <div class="dropdown-item" data-action="buddy-list">Buddy List</div>
             <div class="dropdown-divider"></div>
             <div class="dropdown-item" data-action="shutdown">Shut Down</div>
             <div class="dropdown-item" data-action="restart">Restart</div>
@@ -29,7 +32,8 @@
         <div class="menu-trigger" data-menu="file">
           <span class="menu-label">File</span>
           <div class="dropdown-menu">
-            <div class="dropdown-item disabled">New Folder <span class="shortcut">⌘N</span></div>
+            <div class="dropdown-item" data-action="new-message">New Message <span class="shortcut">⌘N</span></div>
+            <div class="dropdown-item" data-action="new-sticky">New Sticky</div>
             <div class="dropdown-item disabled">Open <span class="shortcut">⌘O</span></div>
             <div class="dropdown-item" data-action="close-window">Close Window <span class="shortcut">⌘W</span></div>
             <div class="dropdown-divider"></div>
@@ -148,6 +152,22 @@
           <div class="icon-image icon-hd"></div>
           <span class="icon-label">Tutto Passa HD</span>
         </div>
+        <div class="desktop-icon" data-window="mail-window">
+          <div class="icon-image icon-mail"></div>
+          <span class="icon-label">Mail</span>
+        </div>
+        <div class="desktop-icon" data-window="services-window">
+          <div class="icon-image icon-document"></div>
+          <span class="icon-label">Services</span>
+        </div>
+        <div class="desktop-icon" data-window="buddy-window">
+          <div class="icon-image icon-buddy"></div>
+          <span class="icon-label">Buddy List</span>
+        </div>
+        <div class="desktop-icon" data-window="guestbook-window">
+          <div class="icon-image icon-guestbook"></div>
+          <span class="icon-label">Guestbook</span>
+        </div>
         <div class="desktop-icon" data-window="videos-window">
           <div class="icon-image icon-folder"></div>
           <span class="icon-label">Videos</span>
@@ -155,6 +175,14 @@
         <div class="desktop-icon" data-window="webamp-container">
           <div class="icon-image icon-winamp"></div>
           <span class="icon-label">Winamp</span>
+        </div>
+        <div class="desktop-icon" data-window="stickies-window" data-action-icon="new-sticky">
+          <div class="icon-image icon-stickies"></div>
+          <span class="icon-label">Stickies</span>
+        </div>
+        <div class="desktop-icon" data-window="game-window">
+          <div class="icon-image icon-game"></div>
+          <span class="icon-label">Heli Attack 3</span>
         </div>
         <div class="desktop-icon" data-window="">
           <div class="icon-image icon-trash"></div>
@@ -216,6 +244,199 @@
           </div>
         </div>
       </div>
+
+      <!-- ─── Game Window ─── -->
+      <div class="mac-window hidden" id="game-window" style="left:60px;top:50px;width:660px;">
+        <div class="window-title-bar">
+          <div class="title-btn close-btn"></div>
+          <div class="title-bar-text">Heli Attack 3</div>
+          <div class="title-btn zoom-btn"></div>
+        </div>
+        <div class="window-content game-content">
+          <div id="game-embed"></div>
+        </div>
+      </div>
+
+      <!-- ─── Mail Window ─── -->
+      <div class="mac-window hidden" id="mail-window" style="left:100px;top:60px;width:480px;">
+        <div class="window-title-bar">
+          <div class="title-btn close-btn"></div>
+          <div class="title-bar-text">Tutto Passa Mail — New Message</div>
+          <div class="title-btn zoom-btn"></div>
+        </div>
+        <div class="window-content mail-content">
+          <div class="mail-toolbar">
+            <button class="mac-button mail-send-btn" id="mail-send">&#9993; Send</button>
+            <button class="mac-button" id="mail-clear">Clear</button>
+          </div>
+          <div class="mail-fields">
+            <div class="mail-field">
+              <label>From:</label>
+              <input type="text" id="mail-from" placeholder="Your Name" />
+            </div>
+            <div class="mail-field">
+              <label>To:</label>
+              <input type="text" value="hello@tuttopassastudios.com" readonly />
+            </div>
+            <div class="mail-field">
+              <label>Subject:</label>
+              <input type="text" id="mail-subject" placeholder="What's this about?" />
+            </div>
+          </div>
+          <textarea id="mail-body" placeholder="Write your message here..." rows="8"></textarea>
+        </div>
+      </div>
+
+      <!-- ─── Services Window ─── -->
+      <div class="mac-window hidden" id="services-window" style="left:60px;top:50px;width:440px;">
+        <div class="window-title-bar">
+          <div class="title-btn close-btn"></div>
+          <div class="title-bar-text">SimpleText — Services</div>
+          <div class="title-btn zoom-btn"></div>
+        </div>
+        <div class="window-content services-content">
+          <h1>What We Do</h1>
+          <p class="subtitle">Tutto Passa Studios — Services</p>
+          <div class="content-divider"></div>
+          <div id="services-list"></div>
+        </div>
+      </div>
+
+      <!-- ─── Buddy List Window ─── -->
+      <div class="mac-window hidden" id="buddy-window" style="left:340px;top:50px;width:220px;">
+        <div class="window-title-bar">
+          <div class="title-btn close-btn"></div>
+          <div class="title-bar-text">Buddy List</div>
+          <div class="title-btn zoom-btn"></div>
+        </div>
+        <div class="window-content buddy-content">
+          <div class="buddy-header">TuttoPassa</div>
+          <div id="buddy-groups"></div>
+          <div class="buddy-away">
+            <div class="buddy-away-label">Away Message:</div>
+            <div class="buddy-away-text">In the studio. Leave a message.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Guestbook Window ─── -->
+      <div class="mac-window hidden" id="guestbook-window" style="left:80px;top:70px;width:460px;">
+        <div class="window-title-bar">
+          <div class="title-btn close-btn"></div>
+          <div class="title-bar-text">Guestbook</div>
+          <div class="title-btn zoom-btn"></div>
+        </div>
+        <div class="window-content guestbook-content">
+          <h1>Sign the Guestbook</h1>
+          <p class="subtitle">Leave your mark!</p>
+          <div class="content-divider"></div>
+          <div class="gb-form">
+            <div class="gb-field">
+              <label>Name:</label>
+              <input type="text" id="gb-name" placeholder="Your name" maxlength="50" />
+            </div>
+            <div class="gb-field">
+              <label>Homepage:</label>
+              <input type="text" id="gb-url" placeholder="https:// (optional)" maxlength="200" />
+            </div>
+            <div class="gb-field">
+              <label>Message:</label>
+              <textarea id="gb-message" placeholder="Say something nice..." rows="3" maxlength="300"></textarea>
+            </div>
+            <div class="gb-actions">
+              <button class="mac-button default-btn" id="gb-sign">Sign Guestbook</button>
+            </div>
+          </div>
+          <div class="content-divider"></div>
+          <div id="gb-entries"></div>
+        </div>
+      </div>
+
+      <!-- ─── Control Panels Window ─── -->
+      <div class="mac-window hidden" id="controlpanel-window" style="left:140px;top:60px;width:380px;">
+        <div class="window-title-bar">
+          <div class="title-btn close-btn"></div>
+          <div class="title-bar-text">Control Panels</div>
+          <div class="title-btn zoom-btn"></div>
+        </div>
+        <div class="window-content cp-content">
+          <h1>Control Panels</h1>
+          <div class="content-divider"></div>
+
+          <div class="cp-section">
+            <div class="cp-label">Desktop Pattern</div>
+            <div class="cp-patterns" id="cp-patterns"></div>
+          </div>
+
+          <div class="cp-section">
+            <div class="cp-label">Mouse Trails</div>
+            <label class="cp-toggle">
+              <input type="checkbox" id="cp-trails" checked />
+              <span>Enabled</span>
+            </label>
+          </div>
+
+          <div class="cp-section">
+            <div class="cp-label">Screensaver Timeout</div>
+            <select id="cp-ss-timeout" class="cp-select">
+              <option value="60000">1 minute</option>
+              <option value="180000" selected>3 minutes</option>
+              <option value="300000">5 minutes</option>
+              <option value="600000">10 minutes</option>
+              <option value="0">Never</option>
+            </select>
+          </div>
+
+          <div class="cp-section">
+            <div class="cp-label">CRT Scanlines</div>
+            <label class="cp-toggle">
+              <input type="checkbox" id="cp-scanlines" checked />
+              <span>Enabled</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Chooser Window ─── -->
+      <div class="mac-window hidden" id="chooser-window" style="left:80px;top:40px;width:520px;">
+        <div class="window-title-bar">
+          <div class="title-btn close-btn"></div>
+          <div class="title-bar-text">Chooser — Project Request</div>
+          <div class="title-btn zoom-btn"></div>
+        </div>
+        <div class="window-content chooser-content">
+          <div class="chooser-progress">
+            <div class="chooser-progress-bar" id="chooser-progress-bar"></div>
+          </div>
+          <div class="chooser-step-label" id="chooser-step-label">Step 1 of 4</div>
+          <div id="chooser-steps"></div>
+          <div class="chooser-nav">
+            <button class="mac-button" id="chooser-back" disabled>Back</button>
+            <button class="mac-button default-btn" id="chooser-next">Next</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Breakout Game Window ─── -->
+      <div class="mac-window hidden" id="breakout-window" style="left:100px;top:40px;width:420px;">
+        <div class="window-title-bar">
+          <div class="title-btn close-btn"></div>
+          <div class="title-bar-text">Breakout</div>
+          <div class="title-btn zoom-btn"></div>
+        </div>
+        <div class="window-content breakout-content">
+          <canvas id="breakout-canvas" width="388" height="320"></canvas>
+          <div class="breakout-hud">
+            <span id="breakout-score">Score: 0</span>
+            <span id="breakout-lives">Lives: 3</span>
+            <span id="breakout-high">High: 0</span>
+          </div>
+          <div class="breakout-start" id="breakout-start">Click to Start</div>
+        </div>
+      </div>
+
+      <!-- ─── Stickies Container ─── -->
+      <div id="stickies-container"></div>
 
       <!-- ─── Webamp Player ─── -->
       <div id="webamp-container"></div>
