@@ -6,6 +6,13 @@ const INITIAL_TRACKS = [
   {
     metaData: {
       artist: 'Tutto Passa Studios',
+      title: 'Don\'t Trust Me V2',
+    },
+    url: '/audio/DONT TRUST ME V2.m4a',
+  },
+  {
+    metaData: {
+      artist: 'Tutto Passa Studios',
       title: 'Just Can\'t Get Enough V2',
     },
     url: '/audio/JUST CANT GET ENOUGH V2.m4a',
