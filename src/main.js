@@ -26,6 +26,14 @@ const INITIAL_TRACKS = [
   },
 ];
 
+// ─── Game Library ─────────────────────────────────────────────
+// Drop .swf files into public/games/ and add entries here.
+const GAME_LIBRARY = [
+  { url: '/games/ha3miniclip.swf', title: 'Heli Attack 3', aspect: '448 / 320' },
+  { url: '/games/interactive_buddy.swf', title: 'Interactive Buddy', aspect: '550 / 400' },
+  { url: '/games/impossible_quiz.swf', title: 'The Impossible Quiz', aspect: '550 / 400' },
+];
+
 // ─── Video Library ────────────────────────────────────────────
 // Drop .mp4 files into public/video/ and add entries here.
 const VIDEO_LIBRARY = [
@@ -205,10 +213,7 @@ function initDesktopIcons() {
       win.classList.remove('fullscreen');
       bringToFront(win);
 
-      // Load game SWF when game window is opened
-      if (targetId === 'game-window') {
-        loadGame();
-      }
+      // No special handling needed — games load from game list
     });
   });
 
@@ -467,10 +472,30 @@ function initVideoList() {
   });
 }
 
-// ─── Game Loader ──────────────────────────────────────────────
-function loadGame() {
+// ─── Game List Init ───────────────────────────────────────────
+function initGameList() {
+  const listEl = document.getElementById('game-list');
+  if (!listEl) return;
+
+  GAME_LIBRARY.forEach(entry => {
+    const item = document.createElement('div');
+    item.className = 'game-list-item';
+    item.textContent = entry.title;
+    item.addEventListener('click', () => {
+      loadGame(entry);
+    });
+    listEl.appendChild(item);
+  });
+}
+
+function loadGame(entry) {
+  const gameWin = document.getElementById('game-window');
   const container = document.getElementById('game-embed');
-  if (!container || container.querySelector('ruffle-embed')) return;
+  if (!gameWin || !container) return;
+
+  // Clear any previous game
+  container.innerHTML = '';
+  container.style.aspectRatio = entry.aspect;
 
   const ruffle = window.RufflePlayer?.newest();
   if (!ruffle) return;
@@ -479,7 +504,19 @@ function loadGame() {
   player.style.width = '100%';
   player.style.height = '100%';
   container.appendChild(player);
-  player.load('/games/ha3miniclip.swf');
+  player.load({
+    url: entry.url,
+    autoplay: 'on',
+    letterbox: 'on',
+    scale: 'showAll',
+    forceScale: true,
+    forceAlign: true,
+    backgroundColor: '#000000',
+  });
+
+  gameWin.querySelector('.title-bar-text').textContent = entry.title;
+  gameWin.classList.remove('hidden');
+  bringToFront(gameWin);
 }
 
 // ─── Webamp Init ──────────────────────────────────────────────
@@ -1551,6 +1588,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMenuSystem();
     initAboutDialog();
     initVideoList();
+    initGameList();
     initWebamp();
     initHitCounter();
     initMouseTrails();
