@@ -875,7 +875,7 @@ function initGuestbook() {
       return;
     }
 
-    const entries = JSON.parse(localStorage.getItem('tuttopassa-guestbook') || '[]');
+    const entries = safeParseJSON('tuttopassa-guestbook', []);
     entries.unshift({
       name,
       url: url || '',
@@ -904,7 +904,7 @@ function renderGuestbookEntries() {
   const container = document.getElementById('gb-entries');
   if (!container) return;
 
-  const entries = JSON.parse(localStorage.getItem('tuttopassa-guestbook') || '[]');
+  const entries = safeParseJSON('tuttopassa-guestbook', []);
   container.innerHTML = '';
 
   if (entries.length === 0) {
@@ -937,6 +937,20 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+function safeParseJSON(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw == null) return fallback;
+    const parsed = JSON.parse(raw);
+    // Verify the parsed value matches the expected type of the fallback
+    if (Array.isArray(fallback) && !Array.isArray(parsed)) return fallback;
+    if (typeof fallback === 'object' && !Array.isArray(fallback) && (typeof parsed !== 'object' || Array.isArray(parsed))) return fallback;
+    return parsed;
+  } catch (_) {
+    return fallback;
+  }
+}
+
 // ─── 5. Control Panels ──────────────────────────────────────
 const DESKTOP_PATTERNS = [
   { name: 'Teal',   colors: ['#5a8a8a', '#70a3a3'] },
@@ -955,7 +969,7 @@ function initControlPanels() {
   if (!patternsEl) return;
 
   // Load saved prefs
-  const prefs = JSON.parse(localStorage.getItem('tuttopassa-prefs') || '{}');
+  const prefs = safeParseJSON('tuttopassa-prefs', {});
 
   // Patterns
   DESKTOP_PATTERNS.forEach((pat, i) => {
@@ -1134,7 +1148,7 @@ function saveStickies() {
 }
 
 function loadStickies() {
-  const data = JSON.parse(localStorage.getItem('tuttopassa-stickies') || '[]');
+  const data = safeParseJSON('tuttopassa-stickies', []);
   data.forEach(s => createStickyNote(s));
 }
 
@@ -1285,8 +1299,8 @@ function renderChooserStep() {
         <dt>Details</dt><dd>${subNames}</dd>
         <dt>Name</dt><dd>${escapeHtml(chooserState.contact.name)}</dd>
         <dt>Email</dt><dd>${escapeHtml(chooserState.contact.email)}</dd>
-        <dt>Budget</dt><dd>${chooserState.contact.budget || 'Not specified'}</dd>
-        <dt>Timeline</dt><dd>${chooserState.contact.timeline || 'Not specified'}</dd>
+        <dt>Budget</dt><dd>${escapeHtml(chooserState.contact.budget) || 'Not specified'}</dd>
+        <dt>Timeline</dt><dd>${escapeHtml(chooserState.contact.timeline) || 'Not specified'}</dd>
         <dt>Notes</dt><dd>${escapeHtml(chooserState.contact.notes) || 'None'}</dd>
       </dl>`;
   }
