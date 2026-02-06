@@ -1409,7 +1409,62 @@ function submitChooser() {
   });
 }
 
-// ─── 8. Easter Egg — Breakout Game ───────────────────────────
+// ─── 8. Map of Content (Finder Icon View) ────────────────────
+const MOC_ITEMS = [
+  { label: 'Read Me',        icon: 'icon-document',      window: 'finder-window' },
+  { label: 'Mail',           icon: 'icon-mail',          window: 'mail-window' },
+  { label: 'Services',       icon: 'icon-document',      window: 'services-window' },
+  { label: 'Buddy List',     icon: 'icon-buddy',         window: 'buddy-window' },
+  { label: 'Guestbook',      icon: 'icon-guestbook',     window: 'guestbook-window' },
+  { label: 'Videos',         icon: 'icon-folder',        window: 'videos-window' },
+  { label: 'Games',          icon: 'icon-game',          window: 'games-window' },
+  { label: 'Winamp',         icon: 'icon-winamp',        window: 'webamp-container', special: 'webamp' },
+  { label: 'Stickies',       icon: 'icon-stickies',      window: '',               special: 'sticky' },
+  { label: 'Control Panels', icon: 'icon-controlpanel',  window: 'controlpanel-window' },
+  { label: 'Chooser',        icon: 'icon-chooser',       window: 'chooser-window' },
+];
+
+function initMapOfContent() {
+  const grid = document.getElementById('moc-grid');
+  const statusBar = document.querySelector('#moc-window .moc-status-bar');
+  if (!grid) return;
+
+  statusBar.textContent = MOC_ITEMS.length + ' items \u00B7 \u221E MB available';
+
+  MOC_ITEMS.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'moc-item';
+
+    const iconEl = document.createElement('div');
+    iconEl.className = 'moc-item-icon ' + item.icon;
+
+    const labelEl = document.createElement('span');
+    labelEl.className = 'moc-item-label';
+    labelEl.textContent = item.label;
+
+    el.appendChild(iconEl);
+    el.appendChild(labelEl);
+
+    el.addEventListener('dblclick', () => {
+      if (item.special === 'webamp') {
+        const container = document.getElementById('webamp-container');
+        if (container) container.classList.toggle('hidden');
+        return;
+      }
+      if (item.special === 'sticky') {
+        createStickyNote();
+        return;
+      }
+      if (item.window) {
+        openWindow(item.window);
+      }
+    });
+
+    grid.appendChild(el);
+  });
+}
+
+// ─── 9. Easter Egg — Breakout Game ───────────────────────────
 let breakoutGame = null;
 let easterEggBuffer = '';
 
@@ -1646,9 +1701,13 @@ document.addEventListener('DOMContentLoaded', () => {
     initChooser();
     initBreakoutWindow();
     initEasterEgg();
+    initMapOfContent();
 
-    const finderWindow = document.getElementById('finder-window');
-    if (finderWindow) bringToFront(finderWindow);
+    const mocWindow = document.getElementById('moc-window');
+    if (mocWindow) {
+      mocWindow.classList.remove('hidden');
+      bringToFront(mocWindow);
+    }
   }
 
   if (shouldBoot) {

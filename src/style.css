@@ -1998,4 +1998,135 @@ button:active, .mac-button:active {
     padding: 10px;
     font-size: 14px;
   }
+
+  /* MOC grid: 3 columns on mobile */
+  .moc-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  /* Keep MOC window hidden on mobile until opened */
+  #moc-window.hidden {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   MAP OF CONTENT (Finder Icon View)
+   ═══════════════════════════════════════════ */
+
+.moc-content {
+  padding: 0 !important;
+  background: #fff;
+}
+
+.moc-status-bar {
+  padding: 3px 8px;
+  font-size: 10px;
+  color: #333;
+  background: #eee;
+  border-bottom: 1px solid #ccc;
+  box-shadow: inset 0 -1px 0 #fff;
+}
+
+.moc-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  padding: 12px 8px;
+}
+
+.moc-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 4px;
+  border-radius: 2px;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='24' viewBox='0 0 16 24'%3E%3Cpath d='M5 0 L5 8 L2 8 L2 12 L0 12 L0 18 L4 22 L14 22 L16 18 L16 12 L12 12 L12 4 L9 4 L9 8 L7 8 L7 2 Z' fill='black' stroke='white' stroke-width='0.5'/%3E%3C/svg%3E") 6 0, pointer;
+}
+
+.moc-item:hover {
+  background: #3366cc;
+}
+
+.moc-item:hover .moc-item-label {
+  color: #fff;
+}
+
+.moc-item-icon {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #000;
+  background: #fff;
+  image-rendering: pixelated;
+  position: relative;
+}
+
+.moc-item-label {
+  font-size: 10px;
+  text-align: center;
+  word-break: break-word;
+  line-height: 1.2;
+  color: #000;
+}
+
+/* --- Control Panel Icon --- */
+.icon-controlpanel {
+  background: #ccc;
+  border-radius: 2px;
+  box-shadow: inset -2px -2px 0 #999, inset 2px 2px 0 #eee;
+}
+.icon-controlpanel::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  right: 4px;
+  height: 4px;
+  background: #669999;
+  border-radius: 1px;
+}
+.icon-controlpanel::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 6px;
+  width: 20px;
+  height: 2px;
+  background: #666;
+  box-shadow: 0 5px 0 #666, 0 10px 0 #666;
+}
+
+/* --- Chooser Icon --- */
+.icon-chooser {
+  background: #e8e8e8;
+  border-radius: 2px;
+  box-shadow: inset -2px -2px 0 #bbb, inset 2px 2px 0 #fff;
+}
+.icon-chooser::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 8px;
+  height: 8px;
+  background: #669999;
+  border-radius: 50%;
+}
+.icon-chooser::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 14px;
+  width: 12px;
+  height: 2px;
+  background: #333;
+  box-shadow: 0 4px 0 #333, 0 8px 0 #333;
+}
+
+/* --- Responsive: MOC tablet constraint --- */
+@media (max-width: 1023px) and (min-width: 768px) {
+  #moc-window {
+    width: min(480px, calc(100vw - 120px)) !important;
+  }
 }

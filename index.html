@@ -149,7 +149,7 @@
 
       <!-- ─── Desktop Icons ─── -->
       <div id="desktop-icons">
-        <div class="desktop-icon" data-window="finder-window">
+        <div class="desktop-icon" data-window="moc-window">
           <div class="icon-image icon-hd"></div>
           <span class="icon-label">Tutto Passa HD</span>
         </div>
@@ -192,7 +192,7 @@
       </div>
 
       <!-- ─── Finder Window ─── -->
-      <div class="mac-window active" id="finder-window" style="left:40px;top:40px;width:520px;">
+      <div class="mac-window hidden" id="finder-window" style="left:40px;top:40px;width:520px;">
         <div class="window-title-bar">
           <div class="title-btn close-btn"></div>
           <div class="title-bar-text">Tutto Passa Studios</div>
@@ -211,6 +211,19 @@
           </div>
 
           <div class="content-divider"></div>
+        </div>
+      </div>
+
+      <!-- ─── Map of Content (Finder Icon View) ─── -->
+      <div class="mac-window hidden" id="moc-window" style="left:40px;top:40px;width:480px;">
+        <div class="window-title-bar">
+          <div class="title-btn close-btn"></div>
+          <div class="title-bar-text">Tutto Passa HD</div>
+          <div class="title-btn zoom-btn"></div>
+        </div>
+        <div class="window-content moc-content">
+          <div class="moc-status-bar"></div>
+          <div class="moc-grid" id="moc-grid"></div>
         </div>
       </div>
 
