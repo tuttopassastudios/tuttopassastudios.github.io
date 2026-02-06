@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Tutto Passa Digital - Music production, digital artistry, and audio-tech innovation.">
+    <title>Tutto Passa Digital | Creative Audio & Digital Studio</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Desktop Area -->
+    <div class="desktop">
+        <!-- Desktop Icons - Left Column -->
+        <div class="desktop-icons">
+            <a href="#about" class="desktop-icon">
+                <div class="icon-image icon-mydocs"></div>
+                <span class="icon-label">My Documents</span>
+            </a>
+            <a href="mailto:hello@tuttopassadigital.com" class="desktop-icon">
+                <div class="icon-image icon-outlook"></div>
+                <span class="icon-label">Outlook<br>Express</span>
+            </a>
+            <a href="#about" class="desktop-icon">
+                <div class="icon-image icon-mycomputer"></div>
+                <span class="icon-label">My Computer</span>
+            </a>
+            <a href="#" class="desktop-icon" id="icon-media-player">
+                <div class="icon-image icon-mediaplayer"></div>
+                <span class="icon-label">Winamp</span>
+            </a>
+            <a href="#projects" class="desktop-icon">
+                <div class="icon-image icon-recycle"></div>
+                <span class="icon-label">Recycle Bin</span>
+            </a>
+            <a href="#contact" class="desktop-icon">
+                <div class="icon-image icon-ie"></div>
+                <span class="icon-label">Internet<br>Explorer</span>
+            </a>
+            <a href="#" class="desktop-icon">
+                <div class="icon-image icon-msn"></div>
+                <span class="icon-label">Setup MSN<br>Internet A...</span>
+            </a>
+            <a href="#contact" class="desktop-icon">
+                <div class="icon-image icon-bug"></div>
+                <span class="icon-label">File a bug<br>report</span>
+            </a>
+        </div>
+
+        <!-- Second Column Icons -->
+        <div class="desktop-icons desktop-icons-col2">
+            <a href="#projects" class="desktop-icon">
+                <div class="icon-image icon-folder"></div>
+                <span class="icon-label">Projects</span>
+            </a>
+            <a href="#contact" class="desktop-icon">
+                <div class="icon-image icon-notepad"></div>
+                <span class="icon-label">Contact Us</span>
+            </a>
+        </div>
+
+        <!-- Webamp Container -->
+        <div id="webamp-container"></div>
+
+        <!-- Windows ME Logo -->
+        <div class="windows-logo">
+            <div class="logo-box">
+                <div class="cursor-icon">&#8598;</div>
+            </div>
+            <span class="logo-text">Windows Millenni</span>
+        </div>
+
+        <!-- About Section (hidden, accessible) -->
+        <div class="hidden-section" id="about">
+            <h2>About Tutto Passa Digital</h2>
+            <p>Creative studio at the intersection of sound, technology, and visual artistry.</p>
+        </div>
+
+        <!-- Contact Section (hidden, accessible) -->
+        <div class="hidden-section" id="contact">
+            <h2>Contact</h2>
+            <p>Email: hello@tuttopassadigital.com</p>
+        </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <button class="start-btn">
+            <span class="start-flag">&#x1fa9f;</span>
+            <span class="start-text">Start</span>
+        </button>
+        <div class="quick-launch">
+            <div class="ql-separator"></div>
+            <button class="ql-btn" title="Show Desktop">&#x1f5a5;&#xfe0f;</button>
+            <button class="ql-btn" title="Internet Explorer">&#x1f310;</button>
+            <button class="ql-btn" title="Outlook Express">&#x1f4e7;</button>
+            <div class="ql-separator"></div>
+        </div>
+        <div class="taskbar-windows" id="taskbar-windows"></div>
+        <div class="system-tray">
+            <div class="tray-icons">
+                <span class="tray-icon">&#x1f50a;</span>
+                <span class="tray-icon">&#x1f50c;</span>
+            </div>
+            <div class="tray-clock">7:24 PM</div>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
