@@ -3,281 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Tutto Passa Digital - Music production, digital artistry, and audio-tech innovation. Everything passes, but creation lasts.">
-    <meta name="keywords" content="music production, digital art, audio technology, creative agency, sound design">
-    <meta name="author" content="Tutto Passa Digital">
-    <meta property="og:title" content="Tutto Passa Digital">
-    <meta property="og:description" content="Music production, digital artistry, and audio-tech innovation.">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
+    <meta name="description" content="Tutto Passa Digital - Music production, digital artistry, and audio-tech innovation.">
     <title>Tutto Passa Digital | Creative Audio & Digital Studio</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Navigation - Menu Bar -->
-    <nav class="nav" id="nav">
-        <div class="nav-container">
-            <div class="nav-inner">
-                <a href="#home" class="nav-logo">TUTTO PASSA DIGITAL</a>
-                <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                <ul class="nav-menu" id="nav-menu">
-                    <li><a href="#home" class="nav-link">Home</a></li>
-                    <li><a href="#about" class="nav-link">About</a></li>
-                    <li><a href="#projects" class="nav-link">Playlist</a></li>
-                    <li><a href="#contact" class="nav-link">Contact</a></li>
-                </ul>
-            </div>
+    <!-- Desktop Area -->
+    <div class="desktop">
+        <!-- Desktop Icons - Left Column -->
+        <div class="desktop-icons">
+            <a href="#about" class="desktop-icon">
+                <div class="icon-image icon-mydocs"></div>
+                <span class="icon-label">My Documents</span>
+            </a>
+            <a href="mailto:hello@tuttopassadigital.com" class="desktop-icon">
+                <div class="icon-image icon-outlook"></div>
+                <span class="icon-label">Outlook<br>Express</span>
+            </a>
+            <a href="#about" class="desktop-icon">
+                <div class="icon-image icon-mycomputer"></div>
+                <span class="icon-label">My Computer</span>
+            </a>
+            <a href="#player" class="desktop-icon">
+                <div class="icon-image icon-mediaplayer"></div>
+                <span class="icon-label">Windows<br>Media Player</span>
+            </a>
+            <a href="#projects" class="desktop-icon">
+                <div class="icon-image icon-recycle"></div>
+                <span class="icon-label">Recycle Bin</span>
+            </a>
+            <a href="#contact" class="desktop-icon">
+                <div class="icon-image icon-ie"></div>
+                <span class="icon-label">Internet<br>Explorer</span>
+            </a>
+            <a href="#" class="desktop-icon">
+                <div class="icon-image icon-msn"></div>
+                <span class="icon-label">Setup MSN<br>Internet A...</span>
+            </a>
+            <a href="#contact" class="desktop-icon">
+                <div class="icon-image icon-bug"></div>
+                <span class="icon-label">File a bug<br>report</span>
+            </a>
         </div>
-    </nav>
 
-    <!-- Hero Section - Main Player Window -->
-    <section class="hero" id="home">
-        <div class="hero-bg"></div>
-        <div class="hero-content">
-            <!-- LED Display -->
-            <div class="hero-display">
-                <h1 class="hero-title">
-                    <span class="hero-title-main">Tutto Passa </span>
-                    <span class="hero-title-accent">Digital</span>
-                </h1>
-                <p class="hero-tagline">*** Music Production • Digital Artistry • Audio Innovation • Everything Passes But Creation Lasts ***</p>
-            </div>
+        <!-- Second Column Icons -->
+        <div class="desktop-icons desktop-icons-col2">
+            <a href="#projects" class="desktop-icon">
+                <div class="icon-image icon-folder"></div>
+                <span class="icon-label">Projects</span>
+            </a>
+            <a href="#contact" class="desktop-icon">
+                <div class="icon-image icon-notepad"></div>
+                <span class="icon-label">Contact Us</span>
+            </a>
+        </div>
 
-            <!-- Visualizer -->
-            <div class="hero-visualizer">
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-                <div class="viz-bar"></div>
-            </div>
-
-            <!-- Player Controls -->
-            <div class="hero-controls">
-                <div class="hero-cta">
-                    <a href="#projects" class="btn btn-primary">► Play</a>
-                    <a href="#about" class="btn btn-secondary">■ Stop</a>
-                    <a href="#contact" class="btn btn-secondary">▐▐ Pause</a>
-                    <a href="#projects" class="btn btn-secondary">◄◄ Prev</a>
-                    <a href="#projects" class="btn btn-secondary">►► Next</a>
+        <!-- Main Media Player - Spaceship Style -->
+        <div class="media-player" id="player">
+            <!-- Left Arm with Speakers -->
+            <div class="player-arm player-arm-left">
+                <div class="arm-speakers">
+                    <div class="speaker-circle"></div>
+                    <div class="speaker-circle"></div>
+                    <div class="speaker-circle"></div>
                 </div>
-            </div>
-        </div>
-        <div class="scroll-indicator">
-            <span></span>
-        </div>
-    </section>
-
-    <!-- About Section - Info Panel -->
-    <section class="section about" id="about">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">ABOUT.NFO - Everything Passes, But Creation Lasts</h2>
-            </div>
-            <div class="about-content">
-                <div class="about-text">
-                    <p class="about-lead">
-                        > Tutto Passa Digital is a creative studio at the intersection of sound,
-                        technology, and visual artistry.
-                    </p>
-                    <p>
-                        > Founded on the philosophy that while moments are fleeting, the art we create
-                        endures—we craft sonic landscapes, digital experiences, and visual narratives
-                        that transcend the ordinary.
-                    </p>
-                    <p>
-                        > From intimate productions to immersive digital installations, we bring a
-                        cinematic sensibility to every project. Our work lives in the space between
-                        the analog warmth of the past and the infinite possibilities of the digital future.
-                    </p>
-                </div>
-                <div class="about-services">
-                    <div class="service-item">
-                        <div class="service-icon">♫</div>
-                        <h3>Music Production</h3>
-                        <p>Composition, mixing, and mastering with a signature atmospheric touch.</p>
-                    </div>
-                    <div class="service-item">
-                        <div class="service-icon">◉</div>
-                        <h3>Sound Design</h3>
-                        <p>Custom audio for film, games, installations, and immersive experiences.</p>
-                    </div>
-                    <div class="service-item">
-                        <div class="service-icon">▣</div>
-                        <h3>Digital Art</h3>
-                        <p>Visual design, motion graphics, and creative direction for digital platforms.</p>
+                <div class="arm-content">
+                    <div class="eq-panel">
+                        <div class="eq-title">
+                            <span class="close-btn">×</span>
+                        </div>
+                        <div class="eq-labels">
+                            <span>Balance</span>
+                            <span>Volume</span>
+                        </div>
+                        <div class="eq-sliders-row">
+                            <div class="eq-slider-vertical">
+                                <div class="slider-track">
+                                    <div class="slider-thumb"></div>
+                                </div>
+                            </div>
+                            <div class="eq-slider-vertical">
+                                <div class="slider-track">
+                                    <div class="slider-thumb" style="top: 20%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="eq-frequencies">
+                            <div class="freq-sliders">
+                                <div class="freq-slider"><div class="freq-fill" style="height: 60%"></div></div>
+                                <div class="freq-slider"><div class="freq-fill" style="height: 75%"></div></div>
+                                <div class="freq-slider"><div class="freq-fill" style="height: 50%"></div></div>
+                                <div class="freq-slider"><div class="freq-fill" style="height: 85%"></div></div>
+                                <div class="freq-slider"><div class="freq-fill" style="height: 40%"></div></div>
+                                <div class="freq-slider"><div class="freq-fill" style="height: 70%"></div></div>
+                                <div class="freq-slider"><div class="freq-fill" style="height: 55%"></div></div>
+                                <div class="freq-slider"><div class="freq-fill" style="height: 90%"></div></div>
+                                <div class="freq-slider"><div class="freq-fill" style="height: 45%"></div></div>
+                                <div class="freq-slider"><div class="freq-fill" style="height: 65%"></div></div>
+                            </div>
+                            <div class="freq-labels">
+                                <span>70</span>
+                                <span>83</span>
+                                <span>93</span>
+                                <span>230</span>
+                                <span>600</span>
+                                <span>1k</span>
+                                <span>2k</span>
+                                <span>6k</span>
+                                <span>10k</span>
+                                <span>16k</span>
+                            </div>
+                            <div class="repeat-label">repeat</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Projects Section - Playlist Window -->
-    <section class="section projects" id="projects">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">PLAYLIST.M3U - Selected Works [6 tracks]</h2>
-            </div>
-            <div class="projects-grid">
-                <article class="project-card">
-                    <div class="project-info">
-                        <span class="project-category">ALBUM</span>
-                        <h3 class="project-title">Echoes in Static (04:32)</h3>
-                    </div>
-                </article>
-                <article class="project-card">
-                    <div class="project-info">
-                        <span class="project-category">GAME</span>
-                        <h3 class="project-title">Neon Drift - OST (03:47)</h3>
-                    </div>
-                </article>
-                <article class="project-card">
-                    <div class="project-info">
-                        <span class="project-category">INSTALL</span>
-                        <h3 class="project-title">Liminal Spaces (06:21)</h3>
-                    </div>
-                </article>
-                <article class="project-card">
-                    <div class="project-info">
-                        <span class="project-category">BRAND</span>
-                        <h3 class="project-title">Frequency - Identity (02:58)</h3>
-                    </div>
-                </article>
-                <article class="project-card">
-                    <div class="project-info">
-                        <span class="project-category">EP</span>
-                        <h3 class="project-title">After Hours (05:14)</h3>
-                    </div>
-                </article>
-                <article class="project-card">
-                    <div class="project-info">
-                        <span class="project-category">LIVE</span>
-                        <h3 class="project-title">Digital Ritual (08:03)</h3>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
+            <!-- Center Section -->
+            <div class="player-center">
+                <!-- Transport Controls -->
+                <div class="transport-controls">
+                    <button class="transport-btn" title="Previous">⏮</button>
+                    <button class="transport-btn" title="Rewind">⏪</button>
+                    <button class="transport-btn btn-play" title="Play">▶</button>
+                    <button class="transport-btn" title="Fast Forward">⏩</button>
+                    <button class="transport-btn" title="Next">⏭</button>
+                    <button class="transport-btn btn-stop" title="Stop">⏹</button>
+                </div>
 
-    <!-- Contact Section - Equalizer Panel -->
-    <section class="section contact" id="contact">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">CONTACT.EXE - Let's Create Something Together</h2>
-            </div>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <p class="contact-lead">
-                        > Have a project in mind?<br>
-                        > We'd love to hear from you.<br>
-                        > Press PLAY to connect...
-                    </p>
-                    <div class="contact-details">
-                        <a href="mailto:hello@tuttopassadigital.com" class="contact-link">
-                            <span class="contact-label">Email</span>
-                            <span class="contact-value">hello@tuttopassadigital.com</span>
-                        </a>
+                <!-- Visualizer Screen -->
+                <div class="visualizer-screen">
+                    <div class="visualizer-content">
+                        <div class="viz-3d">
+                            <div class="viz-bars">
+                                <div class="viz-bar-3d" style="--h: 70%; --delay: 0s;"></div>
+                                <div class="viz-bar-3d" style="--h: 90%; --delay: 0.1s;"></div>
+                                <div class="viz-bar-3d" style="--h: 50%; --delay: 0.2s;"></div>
+                                <div class="viz-bar-3d" style="--h: 80%; --delay: 0.15s;"></div>
+                                <div class="viz-bar-3d" style="--h: 60%; --delay: 0.25s;"></div>
+                                <div class="viz-bar-3d" style="--h: 95%; --delay: 0.05s;"></div>
+                                <div class="viz-bar-3d" style="--h: 40%; --delay: 0.3s;"></div>
+                                <div class="viz-bar-3d" style="--h: 75%; --delay: 0.12s;"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="social-links">
-                        <a href="#" class="social-link" aria-label="Instagram">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <rect x="2" y="2" width="20" height="20" rx="5"/>
-                                <circle cx="12" cy="12" r="4"/>
-                                <circle cx="18" cy="6" r="1" fill="currentColor"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="social-link" aria-label="Twitter/X">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M4 4l16 16M20 4L4 20"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="social-link" aria-label="SoundCloud">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M3 14v4M7 12v6M11 10v8M15 8v10M19 6v12"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="social-link" aria-label="YouTube">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <rect x="2" y="4" width="20" height="16" rx="4"/>
-                                <path d="M10 9l5 3-5 3V9z" fill="currentColor"/>
-                            </svg>
-                        </a>
+                    <!-- Mini controls below visualizer -->
+                    <div class="mini-controls">
+                        <div class="logo-btn">R</div>
+                        <div class="mini-viz">
+                            <span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                        <div class="shuffle-btns">
+                            <span>⟲</span>
+                            <span>⇄</span>
+                        </div>
                     </div>
                 </div>
-                <form class="contact-form" id="contact-form">
-                    <div class="form-group">
-                        <label for="name">Name</label>
-                        <input type="text" id="name" name="name" required placeholder="Enter your name...">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" required placeholder="Enter your email...">
-                    </div>
-                    <div class="form-group">
-                        <label for="message">Message</label>
-                        <textarea id="message" name="message" rows="4" required placeholder="Type your message..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full">► SEND MESSAGE</button>
-                </form>
-            </div>
-        </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <span class="footer-logo">Tutto Passa Digital v2.0</span>
-                    <p class="footer-tagline">"Everything passes, but creation lasts."</p>
-                </div>
-                <div class="footer-links">
-                    <a href="#home">Home</a>
-                    <a href="#about">About</a>
-                    <a href="#projects">Playlist</a>
-                    <a href="#contact">Contact</a>
+                <!-- Brand Title -->
+                <div class="player-brand">
+                    <span class="brand-text">TUTTO PASSA DIGITAL</span>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p class="copyright">© 2025 Tutto Passa Digital - Nullsoft Inspired</p>
-                <a href="https://github.com/tuttopassastudios" class="github-link" target="_blank" rel="noopener">
-                    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
-                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-                    </svg>
-                </a>
+
+            <!-- Right Arm with Playlist -->
+            <div class="player-arm player-arm-right">
+                <div class="arm-content">
+                    <div class="playlist-panel">
+                        <div class="playlist-header">
+                            <span class="playlist-title">Mercury Falling</span>
+                            <span class="close-btn">×</span>
+                        </div>
+                        <div class="playlist-tracks" id="projects">
+                            <div class="track active">
+                                <span class="track-name">The Hounds Of Winter</span>
+                                <span class="track-time">5:26</span>
+                            </div>
+                            <div class="track">
+                                <span class="track-name">I Hung My Head</span>
+                                <span class="track-time">4:40</span>
+                            </div>
+                            <div class="track">
+                                <span class="track-name">Let Your Soul Be Your...</span>
+                                <span class="track-time">6:43</span>
+                            </div>
+                            <div class="track">
+                                <span class="track-name">I Was Brought To My...</span>
+                                <span class="track-time">5:50</span>
+                            </div>
+                            <div class="track">
+                                <span class="track-name">You Still Touch Me</span>
+                                <span class="track-time">3:46</span>
+                            </div>
+                            <div class="track">
+                                <span class="track-name">I'm So Happy I Can't S...</span>
+                                <span class="track-time">3:57</span>
+                            </div>
+                            <div class="track">
+                                <span class="track-name">All Four Seasons</span>
+                                <span class="track-time">4:25</span>
+                            </div>
+                            <div class="track">
+                                <span class="track-name">La Belle Dame Sans R...</span>
+                                <span class="track-time">5:16</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="arm-speakers">
+                    <div class="speaker-circle"></div>
+                    <div class="speaker-circle"></div>
+                    <div class="speaker-circle"></div>
+                </div>
             </div>
         </div>
-    </footer>
+
+        <!-- Windows ME Logo -->
+        <div class="windows-logo">
+            <div class="logo-box">
+                <div class="cursor-icon">↖</div>
+            </div>
+            <span class="logo-text">Windows Millenni</span>
+        </div>
+
+        <!-- About Section (hidden, accessible) -->
+        <div class="hidden-section" id="about">
+            <h2>About Tutto Passa Digital</h2>
+            <p>Creative studio at the intersection of sound, technology, and visual artistry.</p>
+        </div>
+
+        <!-- Contact Section (hidden, accessible) -->
+        <div class="hidden-section" id="contact">
+            <h2>Contact</h2>
+            <p>Email: hello@tuttopassadigital.com</p>
+        </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <button class="start-btn">
+            <span class="start-flag">🪟</span>
+            <span class="start-text">Start</span>
+        </button>
+        <div class="quick-launch">
+            <div class="ql-separator"></div>
+            <button class="ql-btn" title="Show Desktop">🖥️</button>
+            <button class="ql-btn" title="Internet Explorer">🌐</button>
+            <button class="ql-btn" title="Outlook Express">📧</button>
+            <div class="ql-separator"></div>
+        </div>
+        <div class="taskbar-windows">
+            <button class="window-btn active">
+                <span class="win-icon">🎵</span>
+                <span class="win-text">Windows Media Player</span>
+            </button>
+        </div>
+        <div class="system-tray">
+            <div class="tray-icons">
+                <span class="tray-icon">🔊</span>
+                <span class="tray-icon">🔌</span>
+            </div>
+            <div class="tray-clock">7:24 PM</div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
