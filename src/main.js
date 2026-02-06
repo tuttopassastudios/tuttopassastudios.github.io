@@ -183,6 +183,13 @@ function initDesktopIcons() {
     });
 
     icon.addEventListener('dblclick', () => {
+      // Handle action icons (e.g., Stickies creates a new note)
+      const actionIcon = icon.dataset.actionIcon;
+      if (actionIcon) {
+        handleMenuAction(actionIcon);
+        return;
+      }
+
       const targetId = icon.dataset.window;
       if (!targetId) return;
       const win = document.getElementById(targetId);
@@ -613,6 +620,7 @@ function stopScreenSaver() {
 function resetIdleTimer() {
   clearTimeout(idleTimer);
   if (window.innerWidth < 768) return;
+  if (IDLE_TIMEOUT <= 0) return; // "Never" — don't start screensaver
   idleTimer = setTimeout(startScreenSaver, IDLE_TIMEOUT);
 }
 
@@ -913,7 +921,7 @@ function renderGuestbookEntries() {
 
     let html = `<div class="gb-entry-header"><span class="gb-entry-name">${escapeHtml(entry.name)}</span><span class="gb-entry-date">${dateStr}</span></div>`;
     html += `<div class="gb-entry-message">${escapeHtml(entry.message)}</div>`;
-    if (entry.url) {
+    if (entry.url && /^https?:\/\//i.test(entry.url)) {
       const safeUrl = escapeHtml(entry.url);
       html += `<div class="gb-entry-url"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeUrl}</a></div>`;
     }
@@ -1396,8 +1404,9 @@ function startBreakout() {
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     paddle.x = Math.max(0, Math.min(W - paddle.w, (clientX - rect.left) * (W / rect.width) - paddle.w / 2));
   }
+  function onTouchMove(e) { e.preventDefault(); onMove(e); }
   canvas.addEventListener('mousemove', onMove);
-  canvas.addEventListener('touchmove', (e) => { e.preventDefault(); onMove(e); }, { passive: false });
+  canvas.addEventListener('touchmove', onTouchMove, { passive: false });
 
   function updateHUD() {
     document.getElementById('breakout-score').textContent = 'Score: ' + score;
@@ -1423,6 +1432,7 @@ function startBreakout() {
     startOverlay.textContent = 'Click to Retry';
 
     canvas.removeEventListener('mousemove', onMove);
+    canvas.removeEventListener('touchmove', onTouchMove);
   }
 
   function loop() {
