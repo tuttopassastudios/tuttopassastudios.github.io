@@ -140,22 +140,6 @@ html, body {
   background: #666;
 }
 
-/* Music icon */
-.icon-music {
-  background: #ddf;
-  border-radius: 2px;
-}
-.icon-music::after {
-  content: '\266B';
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  color: #333;
-}
-
 /* Trash icon */
 .icon-trash {
   background: #eee;
@@ -291,13 +275,6 @@ html, body {
   user-select: text;
 }
 
-.window-content-webamp {
-  padding: 8px;
-  background: #ddd;
-  min-height: 200px;
-  overflow: hidden;
-}
-
 /* --- Content Styles --- */
 .window-content h1 {
   font-size: 18px;
@@ -328,62 +305,6 @@ html, body {
   font-weight: bold;
   font-size: 11px;
   margin-bottom: 8px;
-}
-
-.retro-marquee {
-  border: 1px solid #999;
-  padding: 3px;
-  font-size: 11px;
-  background: #eee;
-  color: #333;
-  margin-bottom: 0;
-}
-
-.badges {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 12px 0 8px;
-}
-
-.badge {
-  font-size: 10px;
-  padding: 2px 8px;
-  border: 1px solid #000;
-  background: #eee;
-  font-weight: bold;
-}
-
-.badge:hover {
-  background: #3366cc;
-  color: #fff;
-}
-
-.hit-counter {
-  text-align: center;
-  font-size: 11px;
-  color: #666;
-  margin: 8px 0;
-}
-
-.counter-box {
-  display: inline-block;
-  background: #000;
-  border: 1px inset #999;
-  padding: 1px 8px;
-  color: #0f0;
-  font-size: 12px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  font-family: 'Monaco', 'Courier New', monospace;
-}
-
-.copyright {
-  text-align: center;
-  font-size: 10px;
-  color: #999;
-  margin-top: 8px;
 }
 
 /* --- Scrollbars (Classic Mac Platinum) --- */
@@ -438,9 +359,10 @@ button:active, .mac-button:active {
 
 /* --- Webamp overrides --- */
 #webamp-container {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
+  position: absolute;
+  left: 40px;
+  bottom: 24px;
+  z-index: 200;
 }
 
 #webamp {
@@ -451,12 +373,6 @@ button:active, .mac-button:active {
 @media (max-width: 1023px) and (min-width: 768px) {
   #finder-window {
     width: min(520px, calc(100vw - 120px)) !important;
-  }
-
-  #webamp-window {
-    left: 40px !important;
-    top: auto !important;
-    width: 290px !important;
   }
 }
 
@@ -496,5 +412,11 @@ button:active, .mac-button:active {
 
   .mac-window.hidden {
     display: flex;
+  }
+
+  #webamp-container {
+    position: relative;
+    left: 0;
+    bottom: auto;
   }
 }
