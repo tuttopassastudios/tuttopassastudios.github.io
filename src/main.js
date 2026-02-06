@@ -159,20 +159,6 @@ function updateClock() {
   el.textContent = `${day} ${hours}:${minutes} ${ampm}`;
 }
 
-// ─── Hit Counter Animation ────────────────────────────────────
-function animateHitCounter() {
-  const el = document.getElementById('hit-count');
-  if (!el) return;
-  const target = 8_675_309 + Math.floor(Math.random() * 1000);
-  let current = 0;
-  const step = Math.ceil(target / 40);
-  const interval = setInterval(() => {
-    current = Math.min(current + step, target);
-    el.textContent = current.toLocaleString();
-    if (current >= target) clearInterval(interval);
-  }, 30);
-}
-
 // ─── Webamp Init ──────────────────────────────────────────────
 function initWebamp() {
   const Webamp = window.Webamp;
@@ -186,13 +172,8 @@ function initWebamp() {
     return;
   }
 
-  const randomSkin = SKIN_LIBRARY.length > 0
-    ? SKIN_LIBRARY[Math.floor(Math.random() * SKIN_LIBRARY.length)]
-    : null;
-
   const webamp = new Webamp({
     initialTracks: INITIAL_TRACKS,
-    initialSkin: randomSkin ? { url: randomSkin.url } : undefined,
     availableSkins: SKIN_LIBRARY.length > 0 ? SKIN_LIBRARY : undefined,
   });
 
@@ -207,7 +188,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initWindowDragging();
   initWindowControls();
   initDesktopIcons();
-  animateHitCounter();
   initWebamp();
 
   const finderWindow = document.getElementById('finder-window');
