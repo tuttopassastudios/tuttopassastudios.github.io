@@ -1,30 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>~ * TUTTO PASSA STUDIOS * ~ Welcome to my Homepage!!</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>" />
   </head>
-
   <body>
-    <div id="app" style="height: 100vh">
-      <!-- Webamp will attempt to center itself within this div -->
-    </div>
-    <script src="https://unpkg.com/webamp@1.4.2/built/webamp.bundle.min.js"></script>
-    <script>
-      const Webamp = window.Webamp;
-      const webamp = new Webamp({
-        initialTracks: [
-          {
-            metaData: {
-              artist: "Example",
-              title: "Stream",
-            },
-            url: "http://ais-edge147-dal03.cdnstream.com/1977_128.aac"
-          },
-        ],
-      });
+    <div id="app">
 
-      // Returns a promise indicating when it's done loading.
-      webamp.renderWhenReady(document.getElementById("app"));
-    </script>
+      <!-- ▓▓ UNDER CONSTRUCTION BANNER ▓▓ -->
+      <div class="banner">
+        <div class="banner-inner">
+          <span class="banner-text">&#9888; UNDER CONSTRUCTION &#9888; &#128679; PARDON OUR DUST &#128679;</span>
+        </div>
+      </div>
+
+      <!-- ▓▓ MARQUEE ▓▓ -->
+      <marquee class="retro-marquee" scrollamount="3">
+        &#9733; Welcome to TUTTO PASSA STUDIOS &#9733; Best viewed in Internet Explorer 6.0 at 800x600 &#9733; Sign my Guestbook!! &#9733; You are visitor #8,675,309 &#9733; Last updated: January 1st, 2003 &#9733; Made with Notepad &#9733;
+      </marquee>
+
+      <!-- ▓▓ TITLE ▓▓ -->
+      <div class="title-section">
+        <div class="site-title">&#128293; TUTTO PASSA &#128293;</div>
+        <div class="site-subtitle">~ Everything Passes ~</div>
+      </div>
+
+      <!-- ▓▓ NAV BAR ▓▓ -->
+      <nav class="nav-bar">
+        <a href="#">&#127968; Home</a>
+        <span class="separator">|</span>
+        <a href="#">&#128100; About</a>
+        <span class="separator">|</span>
+        <a href="#">&#127925; Music</a>
+        <span class="separator">|</span>
+        <a href="#">&#128221; Guestbook</a>
+        <span class="separator">|</span>
+        <a href="#">&#128279; Links</a>
+        <span class="separator">|</span>
+        <a href="#">&#9993; Email Me!</a>
+      </nav>
+
+      <!-- ▓▓ NOW PLAYING + WEBAMP ▓▓ -->
+      <div class="now-playing">
+        <div class="now-playing-label">
+          <span class="spinning-star">&#9733;</span>
+          NOW PLAYING
+          <span class="spinning-star">&#9733;</span>
+        </div>
+        <div id="webamp-container"></div>
+      </div>
+
+      <!-- ▓▓ FOOTER ▓▓ -->
+      <div class="footer">
+        <div class="badges">
+          <span class="badge badge-ie">&#127760; Best in IE 6.0</span>
+          <span class="badge badge-neopal">&#9734; NeoPal Certified</span>
+          <span class="badge badge-frames">&#9635; Frames Free!</span>
+          <span class="badge badge-html">&#10096;/&#10097; Valid HTML</span>
+          <span class="badge badge-y2k">&#128190; Y2K Ready!</span>
+        </div>
+        <div class="hit-counter">
+          Visitors: <span class="counter-box" id="hit-count">0</span>
+        </div>
+        <div class="copyright">
+          &copy; 2003 Tutto Passa Studios. All rights reserved. Steal my code and I will hack you!!
+        </div>
+      </div>
+
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>

@@ -1,0 +1,311 @@
+/* ========================================
+   TUTTO PASSA STUDIOS — Retro 2000s Style
+   ======================================== */
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  font-family: 'Comic Sans MS', 'Comic Neue', cursive, sans-serif;
+  background: #000033;
+  color: #00ff00;
+  font-size: 14px;
+}
+
+/* --- CRT Scanline Overlay --- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.15) 2px,
+    rgba(0, 0, 0, 0.15) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* --- Tiled Starfield Background --- */
+body {
+  background:
+    radial-gradient(1px 1px at 10% 15%, #ffffff 50%, transparent 100%),
+    radial-gradient(1px 1px at 25% 35%, #ccccff 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 40% 70%, #ffffff 50%, transparent 100%),
+    radial-gradient(1px 1px at 55% 20%, #aaaaff 50%, transparent 100%),
+    radial-gradient(1px 1px at 70% 55%, #ffffff 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 85% 80%, #ccccff 50%, transparent 100%),
+    radial-gradient(1px 1px at 15% 90%, #ffffff 50%, transparent 100%),
+    radial-gradient(1px 1px at 90% 10%, #ffffff 50%, transparent 100%),
+    radial-gradient(1px 1px at 50% 50%, #aaaaff 50%, transparent 100%),
+    radial-gradient(1px 1px at 65% 40%, #ffffff 50%, transparent 100%),
+    radial-gradient(1px 1px at 30% 85%, #ccccff 50%, transparent 100%),
+    radial-gradient(1px 1px at 5% 60%, #ffffff 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 78% 25%, #ffffff 50%, transparent 100%),
+    radial-gradient(1px 1px at 45% 5%, #aaaaff 50%, transparent 100%),
+    #000033;
+  background-size: 200px 200px;
+}
+
+/* --- Main Layout --- */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* --- Under Construction Banner --- */
+.banner {
+  background: repeating-linear-gradient(
+    -45deg,
+    #000000,
+    #000000 10px,
+    #ffcc00 10px,
+    #ffcc00 20px
+  );
+  padding: 4px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.banner-inner {
+  background: #000;
+  padding: 4px 12px;
+  display: inline-block;
+  border: 2px outset #666;
+}
+
+.banner-text {
+  color: #ff0000;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* --- Marquee --- */
+.retro-marquee {
+  background: #000066;
+  border-top: 2px inset #3333aa;
+  border-bottom: 2px inset #3333aa;
+  padding: 3px 0;
+  color: #00ffff;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+/* --- Title Section --- */
+.title-section {
+  text-align: center;
+  padding: 8px 8px 4px;
+  flex-shrink: 0;
+}
+
+.site-title {
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: bold;
+  color: #ff6600;
+  text-shadow:
+    0 0 10px #ff3300,
+    0 0 20px #ff0000,
+    0 0 40px #cc0000,
+    0 0 60px #990000,
+    0 -3px 8px #ffcc00;
+  letter-spacing: 4px;
+  line-height: 1.1;
+}
+
+.site-subtitle {
+  font-size: clamp(12px, 2vw, 16px);
+  color: #ffcc00;
+  font-style: italic;
+  text-shadow: 0 0 8px #ffcc00;
+  margin-top: 2px;
+}
+
+/* --- Nav Bar --- */
+.nav-bar {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 4px 8px;
+  flex-shrink: 0;
+}
+
+.nav-bar a {
+  color: #00ffff;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 3px 10px;
+  border: 2px outset #5555ff;
+  background: #000066;
+  text-shadow: 0 0 6px #00ffff;
+  transition: background 0.1s;
+}
+
+.nav-bar a:hover {
+  background: #0000aa;
+  color: #ffffff;
+  border-style: inset;
+}
+
+.nav-bar .separator {
+  color: #ffcc00;
+  font-size: 12px;
+  padding: 3px 2px;
+  align-self: center;
+}
+
+/* --- Now Playing Section --- */
+.now-playing {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 6px 8px 4px;
+  min-height: 0;
+  position: relative;
+}
+
+.now-playing-label {
+  font-size: 14px;
+  color: #ff00ff;
+  font-weight: bold;
+  text-shadow: 0 0 10px #ff00ff, 0 0 20px #cc00cc;
+  letter-spacing: 3px;
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+.spinning-star {
+  display: inline-block;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+#webamp-container {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 600px;
+  position: relative;
+}
+
+/* --- Footer --- */
+.footer {
+  background: #000011;
+  border-top: 2px outset #333399;
+  padding: 5px 12px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.badges {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+
+.badge {
+  font-size: 9px;
+  padding: 2px 6px;
+  border: 2px outset #888;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.badge-ie {
+  background: #0066cc;
+  color: #ffffff;
+}
+
+.badge-neopal {
+  background: #330066;
+  color: #ff00ff;
+}
+
+.badge-frames {
+  background: #006600;
+  color: #00ff00;
+}
+
+.badge-html {
+  background: #cc3300;
+  color: #ffcc00;
+}
+
+.badge-y2k {
+  background: #333;
+  color: #00ffff;
+}
+
+.hit-counter {
+  font-size: 11px;
+  color: #aaaaaa;
+  margin: 2px 0;
+  font-family: 'Courier New', monospace;
+}
+
+.hit-counter .counter-box {
+  display: inline-block;
+  background: #000;
+  border: 2px inset #555;
+  padding: 1px 8px;
+  color: #00ff00;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin: 0 4px;
+}
+
+.copyright {
+  font-size: 10px;
+  color: #666699;
+}
+
+/* --- Responsive: Hide decorative elements on short viewports --- */
+@media (max-height: 580px) {
+  .badges { display: none; }
+  .banner { padding: 2px; }
+  .banner-inner { padding: 2px 8px; }
+  .title-section { padding: 4px 8px 2px; }
+  .site-title { font-size: 24px; }
+  .footer { padding: 3px 8px; }
+}
+
+@media (max-height: 480px) {
+  .retro-marquee { display: none; }
+  .site-subtitle { display: none; }
+  .now-playing-label { font-size: 12px; margin-bottom: 2px; }
+}
+
+/* --- Webamp overrides — keep it in flow --- */
+#webamp {
+  position: relative !important;
+}

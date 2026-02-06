@@ -1,0 +1,28 @@
+{
+  "name": "tuttopassastudios.github.io",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuttopassastudios/tuttopassastudios.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/tuttopassastudios/tuttopassastudios.github.io/issues"
+  },
+  "homepage": "https://github.com/tuttopassastudios/tuttopassastudios.github.io#readme",
+  "dependencies": {
+    "webamp": "^2.2.0"
+  },
+  "devDependencies": {
+    "vite": "^7.3.1"
+  }
+}
