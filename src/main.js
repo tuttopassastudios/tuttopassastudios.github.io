@@ -32,6 +32,7 @@ const GAME_LIBRARY = [
   { url: '/games/interactive_buddy.swf', title: 'Interactive Buddy', aspect: '550 / 400' },
   { url: '/games/impossible_quiz.swf', title: 'The Impossible Quiz', aspect: '550 / 400' },
   { url: '/games/gunblood.swf', title: 'Gunblood', aspect: '720 / 425' },
+  { url: '/games/age_of_war.swf', title: 'Age of War', aspect: '800 / 600' },
 ];
 
 // ─── Video Library ────────────────────────────────────────────
