@@ -3,13 +3,13 @@
    Windows ME Desktop - Interactive Scripts
    ============================================ */
 
+import Webamp from "https://unpkg.com/webamp@^2/butterchurn";
+
 document.addEventListener('DOMContentLoaded', () => {
     initClock();
     initDesktopIcons();
     initStartMenu();
-    initAudioPlayer();
-    initWindowButtons();
-    initKeyboardShortcuts();
+    initWebamp();
 });
 
 /* ============================================
@@ -103,7 +103,7 @@ function initStartMenu() {
 
 /* ============================================
    AUDIO FOLDER SCANNER
-   Discovers MP3 files in the audio folder
+   Discovers audio files in the audio folder
    ============================================ */
 class AudioScanner {
     static async getFiles() {
@@ -116,7 +116,7 @@ class AudioScanner {
                     const files = await phpResponse.json();
                     if (Array.isArray(files) && files.length > 0) {
                         console.log('Loaded playlist from PHP scanner');
-                        return files.filter(f => f.endsWith('.mp3'));
+                        return files.filter(f => f.endsWith('.mp3') || f.endsWith('.m4a'));
                     }
                 }
             }
@@ -131,7 +131,7 @@ class AudioScanner {
                 const files = await jsonResponse.json();
                 if (Array.isArray(files) && files.length > 0) {
                     console.log('Loaded playlist from playlist.json');
-                    return files.filter(f => f.endsWith('.mp3'));
+                    return files.filter(f => f.endsWith('.mp3') || f.endsWith('.m4a'));
                 }
             }
         } catch (e) {
@@ -353,7 +353,8 @@ class ID3Reader {
     }
 
     static parseFilename(url) {
-        const filename = url.split('/').pop().replace(/\.[^.]+$/, '');
+        const decoded = decodeURIComponent(url);
+        const filename = decoded.split('/').pop().replace(/\.[^.]+$/, '');
 
         let title = filename
             .replace(/^\d+[\s_.-]+/, '')
@@ -385,558 +386,139 @@ class ID3Reader {
 }
 
 /* ============================================
-   AUDIO PLAYER CLASS
+   WEBAMP INTEGRATION
    ============================================ */
-class AudioPlayer {
-    constructor() {
-        this.audio = document.getElementById('audio-player');
-        this.playlist = [];
-        this.currentIndex = 0;
-        this.isPlaying = false;
-
-        // UI Elements
-        this.playBtn = document.querySelector('.btn-play');
-        this.stopBtn = document.querySelector('.btn-stop');
-        this.prevBtn = document.querySelector('.btn-prev');
-        this.nextBtn = document.querySelector('.btn-next');
-        this.rewindBtn = document.querySelector('.btn-rewind');
-        this.forwardBtn = document.querySelector('.btn-forward');
-        this.progressBar = document.getElementById('progress-bar');
-        this.currentTimeEl = document.querySelector('.current-time');
-        this.totalTimeEl = document.querySelector('.total-time');
-        this.brandText = document.querySelector('.brand-text');
-        this.mediaPlayer = document.querySelector('.media-player');
-        this.volumeThumb = document.getElementById('volume-thumb');
-        this.volumeControl = document.getElementById('volume-control');
-        this.playlistContainer = document.querySelector('.playlist-tracks');
-
-        // Visualizer elements
-        this.vizBars = document.querySelectorAll('.viz-bar-3d');
-        this.miniVizBars = document.querySelectorAll('.mini-viz span');
-        this.freqSliders = document.querySelectorAll('.freq-fill');
-
-        // EQ animation interval
-        this.eqInterval = null;
-
-        this.init();
+async function initWebamp() {
+    if (!Webamp.browserIsSupported()) {
+        console.warn('Webamp is not supported in this browser');
+        return;
     }
 
-    async init() {
-        await this.scanAndBuildPlaylist();
-        this.bindEvents();
-        this.bindAudioEvents();
-        this.initVolumeControl();
+    const container = document.getElementById('webamp-container');
+    if (!container) return;
 
-        // Set initial volume
-        this.audio.volume = 0.8;
+    // Discover audio files
+    const files = await AudioScanner.getFiles();
 
-        // Start in paused state
-        this.updateVisualizerState(false);
-    }
+    // Build initial tracks with metadata
+    const initialTracks = [];
+    for (const filename of files) {
+        const url = `audio/${encodeURIComponent(filename)}`;
+        const tags = await ID3Reader.readTags(url);
 
-    async scanAndBuildPlaylist() {
-        // Clear existing content
-        this.playlistContainer.innerHTML = '<div class="track-loading">Scanning for tracks...</div>';
-
-        // Scan for audio files
-        const files = await AudioScanner.getFiles();
-
-        if (files.length === 0) {
-            this.playlistContainer.innerHTML = '<div class="track-loading">No tracks found. Add MP3 files to /audio/</div>';
-            return;
-        }
-
-        // Clear loading message
-        this.playlistContainer.innerHTML = '';
-
-        // Create track elements
-        for (let i = 0; i < files.length; i++) {
-            const filename = files[i];
-            const src = `audio/${filename}`;
-
-            // Create track element
-            const trackEl = document.createElement('div');
-            trackEl.className = 'track' + (i === 0 ? ' active' : '');
-            trackEl.dataset.src = src;
-            trackEl.innerHTML = `
-                <span class="track-name">Loading...</span>
-                <span class="track-time">--:--</span>
-            `;
-
-            this.playlistContainer.appendChild(trackEl);
-
-            const trackNameEl = trackEl.querySelector('.track-name');
-            const trackTimeEl = trackEl.querySelector('.track-time');
-
-            // Add to playlist
-            this.playlist.push({
-                element: trackEl,
-                src: src,
-                name: 'Loading...',
-                duration: '--:--',
-                trackNameEl: trackNameEl,
-                trackTimeEl: trackTimeEl
-            });
-
-            // Click handler
-            const index = i;
-            trackEl.addEventListener('click', () => {
-                this.loadTrack(index);
-                this.play();
-            });
-
-            // Load metadata asynchronously
-            this.loadTrackMetadata(i, src);
-        }
-
-        // Update initial display with first track name (after short delay for metadata)
-        setTimeout(() => {
-            if (this.playlist.length > 0 && this.playlist[0].name !== 'Loading...') {
-                this.brandText.textContent = this.playlist[0].name.toUpperCase();
-                this.totalTimeEl.textContent = this.playlist[0].duration;
-            }
-        }, 500);
-    }
-
-    async loadTrackMetadata(index, src) {
-        try {
-            // Load ID3 tags
-            const tags = await ID3Reader.readTags(src);
-
-            // Load duration
-            const durationSeconds = await ID3Reader.getDuration(src);
-            const duration = durationSeconds ? this.formatTime(durationSeconds) : '--:--';
-
-            // Update playlist entry
-            const track = this.playlist[index];
-            track.name = tags.title || this.parseFilename(src);
-            track.artist = tags.artist || '';
-            track.album = tags.album || '';
-            track.duration = duration;
-
-            // Update UI
-            track.trackNameEl.textContent = track.name;
-            track.trackTimeEl.textContent = duration;
-
-            // If this is the first track and it's active, update brand text
-            if (index === 0 && track.element.classList.contains('active')) {
-                this.brandText.textContent = track.name.toUpperCase();
-                this.totalTimeEl.textContent = duration;
-            }
-
-        } catch (error) {
-            console.warn(`Failed to load metadata for track ${index}:`, error);
-
-            const track = this.playlist[index];
-            track.name = this.parseFilename(src);
-            track.trackNameEl.textContent = track.name;
-        }
-    }
-
-    parseFilename(url) {
-        const filename = url.split('/').pop().replace(/\.[^.]+$/, '');
-        return filename
-            .replace(/^\d+[\s_.-]+/, '')
-            .replace(/[_-]/g, ' ')
-            .replace(/\s+/g, ' ')
-            .trim()
-            .replace(/\b\w/g, c => c.toUpperCase());
-    }
-
-    bindEvents() {
-        if (this.playBtn) {
-            this.playBtn.addEventListener('click', () => this.togglePlay());
-        }
-
-        if (this.stopBtn) {
-            this.stopBtn.addEventListener('click', () => this.stop());
-        }
-
-        if (this.prevBtn) {
-            this.prevBtn.addEventListener('click', () => this.previous());
-        }
-
-        if (this.nextBtn) {
-            this.nextBtn.addEventListener('click', () => this.next());
-        }
-
-        if (this.rewindBtn) {
-            this.rewindBtn.addEventListener('click', () => this.seek(this.audio.currentTime - 10));
-        }
-
-        if (this.forwardBtn) {
-            this.forwardBtn.addEventListener('click', () => this.seek(this.audio.currentTime + 10));
-        }
-
-        if (this.progressBar) {
-            this.progressBar.addEventListener('input', (e) => {
-                const percent = e.target.value;
-                const time = (percent / 100) * this.audio.duration;
-                if (!isNaN(time)) {
-                    this.seek(time);
-                }
-            });
-        }
-
-        const transportBtns = document.querySelectorAll('.transport-btn');
-        transportBtns.forEach(btn => {
-            btn.addEventListener('mousedown', () => {
-                btn.style.transform = 'scale(0.95)';
-            });
-            btn.addEventListener('mouseup', () => {
-                btn.style.transform = 'scale(1)';
-            });
-            btn.addEventListener('mouseleave', () => {
-                btn.style.transform = 'scale(1)';
-            });
+        initialTracks.push({
+            metaData: {
+                artist: tags.artist || 'Tutto Passa Digital',
+                title: tags.title || filename.replace(/\.[^.]+$/, '')
+            },
+            url: url
         });
     }
 
-    bindAudioEvents() {
-        this.audio.addEventListener('timeupdate', () => {
-            this.updateTimeDisplay();
-            this.updateProgressBar();
-        });
+    // Create Webamp instance
+    const webamp = new Webamp({
+        initialTracks: initialTracks.length > 0 ? initialTracks : [{
+            metaData: { artist: 'Tutto Passa Digital', title: 'No tracks found' },
+            url: ''
+        }],
+        enableHotkeys: true,
+        enableMediaSession: true,
+        zIndex: 100
+    });
 
-        this.audio.addEventListener('loadedmetadata', () => {
-            this.totalTimeEl.textContent = this.formatTime(this.audio.duration);
-        });
+    // Store globally for external access
+    window.webampInstance = webamp;
 
-        this.audio.addEventListener('ended', () => {
-            this.next();
-        });
+    // Render Webamp
+    await webamp.renderWhenReady(container);
 
-        this.audio.addEventListener('play', () => {
-            this.isPlaying = true;
-            this.updatePlayButton();
-            this.updateVisualizerState(true);
-        });
+    // Set up taskbar integration
+    setupWebampTaskbar(webamp);
 
-        this.audio.addEventListener('pause', () => {
-            this.isPlaying = false;
-            this.updatePlayButton();
-            this.updateVisualizerState(false);
-        });
+    // Set up desktop icon integration
+    setupMediaPlayerIcon(webamp);
 
-        this.audio.addEventListener('error', (e) => {
-            console.warn('Audio playback error:', e);
-            this.handlePlaybackError();
-        });
-    }
+    // Handle close
+    webamp.onClose(() => {
+        updateTaskbarButton(false);
+    });
 
-    initVolumeControl() {
-        if (!this.volumeControl || !this.volumeThumb) return;
+    // Handle minimize
+    webamp.onMinimize(() => {
+        updateTaskbarButton(true);
+    });
 
-        const sliderTrack = this.volumeControl.querySelector('.slider-track');
-        if (!sliderTrack) return;
-
-        let isDragging = false;
-
-        const updateVolume = (e) => {
-            const rect = sliderTrack.getBoundingClientRect();
-            const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
-            const percent = y / rect.height;
-
-            const volume = 1 - percent;
-            this.setVolume(volume);
-
-            this.volumeThumb.style.top = `${percent * 100}%`;
-        };
-
-        sliderTrack.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            updateVolume(e);
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                updateVolume(e);
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-        });
-    }
-
-    loadTrack(index) {
-        if (index < 0 || index >= this.playlist.length) return;
-
-        this.currentIndex = index;
-        const track = this.playlist[index];
-
-        this.playlist.forEach(t => t.element.classList.remove('active'));
-        track.element.classList.add('active');
-
-        if (this.brandText) {
-            this.brandText.textContent = track.name.toUpperCase();
+    // Handle track changes
+    webamp.onTrackDidChange((track) => {
+        if (track) {
+            const text = track.metaData?.title
+                ? `${track.metaData.artist || ''} - ${track.metaData.title}`.replace(/^\s*-\s*/, '')
+                : 'Winamp';
+            updateTaskbarText(text);
         }
-
-        if (track.src) {
-            this.audio.src = track.src;
-            this.audio.load();
-        }
-
-        this.currentTimeEl.textContent = '0:00';
-        this.totalTimeEl.textContent = track.duration || '0:00';
-
-        if (this.progressBar) {
-            this.progressBar.value = 0;
-        }
-    }
-
-    play() {
-        if (this.playlist.length === 0) {
-            console.log('No tracks to play');
-            return;
-        }
-
-        if (this.audio.src) {
-            this.audio.play().catch(err => {
-                console.warn('Playback failed:', err);
-                this.handlePlaybackError();
-            });
-        } else {
-            this.loadTrack(0);
-            this.audio.play().catch(err => {
-                console.warn('Playback failed:', err);
-                this.handlePlaybackError();
-            });
-        }
-    }
-
-    pause() {
-        this.audio.pause();
-    }
-
-    togglePlay() {
-        if (this.isPlaying) {
-            this.pause();
-        } else {
-            this.play();
-        }
-    }
-
-    stop() {
-        this.audio.pause();
-        this.audio.currentTime = 0;
-        this.isPlaying = false;
-        this.updatePlayButton();
-        this.updateVisualizerState(false);
-        this.currentTimeEl.textContent = '0:00';
-        if (this.progressBar) {
-            this.progressBar.value = 0;
-        }
-    }
-
-    next() {
-        if (this.playlist.length === 0) return;
-        const nextIndex = (this.currentIndex + 1) % this.playlist.length;
-        this.loadTrack(nextIndex);
-        if (this.isPlaying) {
-            this.play();
-        }
-    }
-
-    previous() {
-        if (this.playlist.length === 0) return;
-        if (this.audio.currentTime > 3) {
-            this.audio.currentTime = 0;
-        } else {
-            const prevIndex = (this.currentIndex - 1 + this.playlist.length) % this.playlist.length;
-            this.loadTrack(prevIndex);
-            if (this.isPlaying) {
-                this.play();
-            }
-        }
-    }
-
-    seek(time) {
-        if (!isNaN(this.audio.duration)) {
-            this.audio.currentTime = Math.max(0, Math.min(time, this.audio.duration));
-        }
-    }
-
-    setVolume(level) {
-        this.audio.volume = Math.max(0, Math.min(1, level));
-    }
-
-    updateTimeDisplay() {
-        this.currentTimeEl.textContent = this.formatTime(this.audio.currentTime);
-    }
-
-    updateProgressBar() {
-        if (this.progressBar && this.audio.duration) {
-            const percent = (this.audio.currentTime / this.audio.duration) * 100;
-            this.progressBar.value = percent;
-        }
-    }
-
-    updatePlayButton() {
-        if (!this.playBtn) return;
-
-        if (this.isPlaying) {
-            this.playBtn.textContent = '⏸';
-            this.playBtn.title = 'Pause';
-            this.playBtn.classList.add('playing');
-        } else {
-            this.playBtn.textContent = '▶';
-            this.playBtn.title = 'Play';
-            this.playBtn.classList.remove('playing');
-        }
-    }
-
-    updateVisualizerState(playing) {
-        if (this.mediaPlayer) {
-            if (playing) {
-                this.mediaPlayer.classList.remove('audio-paused');
-                this.startEqAnimation();
-            } else {
-                this.mediaPlayer.classList.add('audio-paused');
-                this.stopEqAnimation();
-            }
-        }
-
-        const state = playing ? 'running' : 'paused';
-
-        this.vizBars.forEach(bar => {
-            bar.style.animationPlayState = state;
-        });
-
-        this.miniVizBars.forEach(bar => {
-            bar.style.animationPlayState = state;
-        });
-    }
-
-    startEqAnimation() {
-        if (this.eqInterval) return;
-
-        this.eqInterval = setInterval(() => {
-            this.freqSliders.forEach(slider => {
-                const randomHeight = 30 + Math.random() * 70;
-                slider.style.height = `${randomHeight}%`;
-                slider.style.transition = 'height 0.3s ease';
-            });
-        }, 500);
-    }
-
-    stopEqAnimation() {
-        if (this.eqInterval) {
-            clearInterval(this.eqInterval);
-            this.eqInterval = null;
-        }
-    }
-
-    formatTime(seconds) {
-        if (isNaN(seconds) || !isFinite(seconds)) return '0:00';
-
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    handlePlaybackError() {
-        console.log('Audio file not found. Add MP3 files to the /audio/ folder.');
-
-        this.updateVisualizerState(true);
-        this.isPlaying = true;
-        this.updatePlayButton();
-
-        this.simulatePlayback();
-    }
-
-    simulatePlayback() {
-        let simulatedTime = 0;
-        const trackDuration = this.parseTimeToSeconds(this.playlist[this.currentIndex]?.duration || '3:00');
-
-        const simulationInterval = setInterval(() => {
-            if (!this.isPlaying) {
-                clearInterval(simulationInterval);
-                return;
-            }
-
-            simulatedTime += 1;
-            this.currentTimeEl.textContent = this.formatTime(simulatedTime);
-
-            if (this.progressBar) {
-                this.progressBar.value = (simulatedTime / trackDuration) * 100;
-            }
-
-            if (simulatedTime >= trackDuration) {
-                clearInterval(simulationInterval);
-                this.next();
-            }
-        }, 1000);
-    }
-
-    parseTimeToSeconds(timeStr) {
-        if (!timeStr || timeStr === '--:--') return 180;
-        const parts = timeStr.split(':');
-        return parseInt(parts[0]) * 60 + parseInt(parts[1]);
-    }
-}
-
-/* ============================================
-   INITIALIZE AUDIO PLAYER
-   ============================================ */
-let audioPlayer;
-
-function initAudioPlayer() {
-    audioPlayer = new AudioPlayer();
-}
-
-/* ============================================
-   WINDOW BUTTON INTERACTION
-   ============================================ */
-function initWindowButtons() {
-    const windowBtns = document.querySelectorAll('.window-btn');
-    windowBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            windowBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        });
     });
 }
 
 /* ============================================
-   KEYBOARD SHORTCUTS
+   TASKBAR INTEGRATION
    ============================================ */
-function initKeyboardShortcuts() {
-    document.addEventListener('keydown', (e) => {
-        if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
-            e.preventDefault();
-            if (audioPlayer) {
-                audioPlayer.togglePlay();
-            }
-        }
+function setupWebampTaskbar(webamp) {
+    const taskbarWindows = document.getElementById('taskbar-windows');
+    if (!taskbarWindows) return;
 
-        if (e.code === 'ArrowRight' && audioPlayer) {
-            audioPlayer.seek(audioPlayer.audio.currentTime + 5);
-        }
-        if (e.code === 'ArrowLeft' && audioPlayer) {
-            audioPlayer.seek(audioPlayer.audio.currentTime - 5);
-        }
+    const btn = document.createElement('button');
+    btn.className = 'window-btn active';
+    btn.id = 'webamp-taskbar-btn';
+    btn.innerHTML = '<span class="win-icon">&#x1f3b5;</span><span class="win-text">Winamp</span>';
 
-        if (e.code === 'ArrowUp' && audioPlayer) {
-            e.preventDefault();
-            audioPlayer.setVolume(audioPlayer.audio.volume + 0.1);
+    btn.addEventListener('click', () => {
+        // Reopen Webamp if it was closed
+        const container = document.getElementById('webamp-container');
+        if (container && container.children.length === 0) {
+            // Re-initialize if fully closed
+            initWebamp();
         }
-        if (e.code === 'ArrowDown' && audioPlayer) {
-            e.preventDefault();
-            audioPlayer.setVolume(audioPlayer.audio.volume - 0.1);
-        }
-
-        if (e.code === 'KeyN' && audioPlayer) {
-            audioPlayer.next();
-        }
-
-        if (e.code === 'KeyP' && audioPlayer) {
-            audioPlayer.previous();
-        }
-
-        if (e.code === 'Escape') {
-            const selected = document.querySelector('.desktop-icon.selected');
-            if (selected) selected.classList.remove('selected');
-        }
+        btn.classList.add('active');
     });
+
+    taskbarWindows.appendChild(btn);
+}
+
+function setupMediaPlayerIcon(webamp) {
+    const icon = document.getElementById('icon-media-player');
+    if (!icon) return;
+
+    icon.addEventListener('dblclick', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const container = document.getElementById('webamp-container');
+        if (container && container.children.length === 0) {
+            // Re-initialize if fully closed
+            initWebamp();
+        }
+
+        updateTaskbarButton(true);
+    });
+}
+
+function updateTaskbarButton(visible) {
+    const btn = document.getElementById('webamp-taskbar-btn');
+    if (!btn) return;
+
+    if (visible) {
+        btn.classList.add('active');
+    } else {
+        btn.classList.remove('active');
+    }
+}
+
+function updateTaskbarText(text) {
+    const btn = document.getElementById('webamp-taskbar-btn');
+    if (!btn) return;
+
+    const winText = btn.querySelector('.win-text');
+    if (winText) {
+        winText.textContent = text || 'Winamp';
+    }
 }

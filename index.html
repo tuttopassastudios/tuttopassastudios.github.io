@@ -25,9 +25,9 @@
                 <div class="icon-image icon-mycomputer"></div>
                 <span class="icon-label">My Computer</span>
             </a>
-            <a href="#player" class="desktop-icon">
+            <a href="#" class="desktop-icon" id="icon-media-player">
                 <div class="icon-image icon-mediaplayer"></div>
-                <span class="icon-label">Windows<br>Media Player</span>
+                <span class="icon-label">Winamp</span>
             </a>
             <a href="#projects" class="desktop-icon">
                 <div class="icon-image icon-recycle"></div>
@@ -59,152 +59,13 @@
             </a>
         </div>
 
-        <!-- Main Media Player - Spaceship Style -->
-        <div class="media-player" id="player">
-            <!-- Left Arm with Speakers -->
-            <div class="player-arm player-arm-left">
-                <div class="arm-speakers">
-                    <div class="speaker-circle"></div>
-                    <div class="speaker-circle"></div>
-                    <div class="speaker-circle"></div>
-                </div>
-                <div class="arm-content">
-                    <div class="eq-panel">
-                        <div class="eq-title">
-                            <span class="close-btn">×</span>
-                        </div>
-                        <div class="eq-labels">
-                            <span>Balance</span>
-                            <span>Volume</span>
-                        </div>
-                        <div class="eq-sliders-row">
-                            <div class="eq-slider-vertical">
-                                <div class="slider-track">
-                                    <div class="slider-thumb"></div>
-                                </div>
-                            </div>
-                            <div class="eq-slider-vertical" id="volume-control">
-                                <div class="slider-track">
-                                    <div class="slider-thumb" id="volume-thumb" style="top: 20%"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="eq-frequencies">
-                            <div class="freq-sliders">
-                                <div class="freq-slider"><div class="freq-fill" style="height: 60%"></div></div>
-                                <div class="freq-slider"><div class="freq-fill" style="height: 75%"></div></div>
-                                <div class="freq-slider"><div class="freq-fill" style="height: 50%"></div></div>
-                                <div class="freq-slider"><div class="freq-fill" style="height: 85%"></div></div>
-                                <div class="freq-slider"><div class="freq-fill" style="height: 40%"></div></div>
-                                <div class="freq-slider"><div class="freq-fill" style="height: 70%"></div></div>
-                                <div class="freq-slider"><div class="freq-fill" style="height: 55%"></div></div>
-                                <div class="freq-slider"><div class="freq-fill" style="height: 90%"></div></div>
-                                <div class="freq-slider"><div class="freq-fill" style="height: 45%"></div></div>
-                                <div class="freq-slider"><div class="freq-fill" style="height: 65%"></div></div>
-                            </div>
-                            <div class="freq-labels">
-                                <span>70</span>
-                                <span>83</span>
-                                <span>93</span>
-                                <span>230</span>
-                                <span>600</span>
-                                <span>1k</span>
-                                <span>2k</span>
-                                <span>6k</span>
-                                <span>10k</span>
-                                <span>16k</span>
-                            </div>
-                            <div class="repeat-label">repeat</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Center Section -->
-            <div class="player-center">
-                <!-- Time Display -->
-                <div class="time-display">
-                    <span class="current-time">0:00</span>
-                    <span class="time-separator">/</span>
-                    <span class="total-time">0:00</span>
-                </div>
-
-                <!-- Progress Bar -->
-                <div class="progress-container">
-                    <input type="range" class="progress-bar" id="progress-bar" min="0" max="100" value="0" step="0.1">
-                </div>
-
-                <!-- Transport Controls -->
-                <div class="transport-controls">
-                    <button class="transport-btn btn-prev" title="Previous">⏮</button>
-                    <button class="transport-btn btn-rewind" title="Rewind">⏪</button>
-                    <button class="transport-btn btn-play" title="Play">▶</button>
-                    <button class="transport-btn btn-forward" title="Fast Forward">⏩</button>
-                    <button class="transport-btn btn-next" title="Next">⏭</button>
-                    <button class="transport-btn btn-stop" title="Stop">⏹</button>
-                </div>
-
-                <!-- Visualizer Screen -->
-                <div class="visualizer-screen">
-                    <div class="visualizer-content">
-                        <div class="viz-3d">
-                            <div class="viz-bars">
-                                <div class="viz-bar-3d" style="--h: 70%; --delay: 0s;"></div>
-                                <div class="viz-bar-3d" style="--h: 90%; --delay: 0.1s;"></div>
-                                <div class="viz-bar-3d" style="--h: 50%; --delay: 0.2s;"></div>
-                                <div class="viz-bar-3d" style="--h: 80%; --delay: 0.15s;"></div>
-                                <div class="viz-bar-3d" style="--h: 60%; --delay: 0.25s;"></div>
-                                <div class="viz-bar-3d" style="--h: 95%; --delay: 0.05s;"></div>
-                                <div class="viz-bar-3d" style="--h: 40%; --delay: 0.3s;"></div>
-                                <div class="viz-bar-3d" style="--h: 75%; --delay: 0.12s;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Mini controls below visualizer -->
-                    <div class="mini-controls">
-                        <div class="logo-btn">R</div>
-                        <div class="mini-viz">
-                            <span></span><span></span><span></span><span></span><span></span>
-                        </div>
-                        <div class="shuffle-btns">
-                            <span>⟲</span>
-                            <span>⇄</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Brand Title -->
-                <div class="player-brand">
-                    <span class="brand-text">TUTTO PASSA DIGITAL</span>
-                </div>
-            </div>
-
-            <!-- Right Arm with Playlist -->
-            <div class="player-arm player-arm-right">
-                <div class="arm-content">
-                    <div class="playlist-panel">
-                        <div class="playlist-header">
-                            <span class="playlist-title">Mercury Falling</span>
-                            <span class="close-btn">×</span>
-                        </div>
-                        <div class="playlist-tracks" id="projects">
-                            <!-- Tracks are dynamically loaded from audio folder -->
-                            <div class="track-loading">Scanning for tracks...</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="arm-speakers">
-                    <div class="speaker-circle"></div>
-                    <div class="speaker-circle"></div>
-                    <div class="speaker-circle"></div>
-                </div>
-            </div>
-        </div>
+        <!-- Webamp Container -->
+        <div id="webamp-container"></div>
 
         <!-- Windows ME Logo -->
         <div class="windows-logo">
             <div class="logo-box">
-                <div class="cursor-icon">↖</div>
+                <div class="cursor-icon">&#8598;</div>
             </div>
             <span class="logo-text">Windows Millenni</span>
         </div>
@@ -225,34 +86,26 @@
     <!-- Taskbar -->
     <div class="taskbar">
         <button class="start-btn">
-            <span class="start-flag">🪟</span>
+            <span class="start-flag">&#x1fa9f;</span>
             <span class="start-text">Start</span>
         </button>
         <div class="quick-launch">
             <div class="ql-separator"></div>
-            <button class="ql-btn" title="Show Desktop">🖥️</button>
-            <button class="ql-btn" title="Internet Explorer">🌐</button>
-            <button class="ql-btn" title="Outlook Express">📧</button>
+            <button class="ql-btn" title="Show Desktop">&#x1f5a5;&#xfe0f;</button>
+            <button class="ql-btn" title="Internet Explorer">&#x1f310;</button>
+            <button class="ql-btn" title="Outlook Express">&#x1f4e7;</button>
             <div class="ql-separator"></div>
         </div>
-        <div class="taskbar-windows">
-            <button class="window-btn active">
-                <span class="win-icon">🎵</span>
-                <span class="win-text">Windows Media Player</span>
-            </button>
-        </div>
+        <div class="taskbar-windows" id="taskbar-windows"></div>
         <div class="system-tray">
             <div class="tray-icons">
-                <span class="tray-icon">🔊</span>
-                <span class="tray-icon">🔌</span>
+                <span class="tray-icon">&#x1f50a;</span>
+                <span class="tray-icon">&#x1f50c;</span>
             </div>
             <div class="tray-clock">7:24 PM</div>
         </div>
     </div>
 
-    <!-- Hidden Audio Element -->
-    <audio id="audio-player" preload="metadata"></audio>
-
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
