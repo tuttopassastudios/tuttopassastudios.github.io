@@ -29,7 +29,6 @@ const INITIAL_TRACKS = [
 // ─── Game Library ─────────────────────────────────────────────
 // Drop .swf files into public/games/ and add entries here.
 const GAME_LIBRARY = [
-  { url: '/games/ha3miniclip.swf', title: 'Heli Attack 3', aspect: '448 / 320' },
   { url: '/games/interactive_buddy.swf', title: 'Interactive Buddy', aspect: '550 / 400' },
   { url: '/games/impossible_quiz.swf', title: 'The Impossible Quiz', aspect: '550 / 400' },
 ];
