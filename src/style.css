@@ -1824,6 +1824,119 @@ button:active, .mac-button:active {
     display: flex;
   }
 
+  /* Keep game window hidden until a game is selected */
+  #game-window.hidden {
+    display: none;
+  }
+
+  /* Keep TV window hidden until a video is selected */
+  #tv-window.hidden {
+    display: none;
+  }
+
+  /* Game embed: fit within viewport */
+  #game-embed {
+    max-height: 60vh;
+  }
+
+  #game-embed ruffle-player {
+    max-height: 60vh;
+  }
+
+  /* Volume slider: bigger touch targets */
+  #game-audio-bar {
+    padding: 8px 12px;
+    gap: 10px;
+  }
+
+  .game-audio-btn {
+    font-size: 20px;
+    padding: 4px 8px;
+    min-width: 36px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #game-volume {
+    flex: 1;
+    height: 8px;
+  }
+
+  #game-volume::-webkit-slider-thumb {
+    width: 24px;
+    height: 24px;
+  }
+
+  #game-volume::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Mail: stack form labels above fields */
+  .mail-field {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 4px 8px;
+  }
+
+  .mail-field label {
+    width: auto;
+    margin-bottom: 2px;
+  }
+
+  .mail-field input {
+    font-size: 16px;
+    padding: 6px 4px;
+  }
+
+  #mail-body {
+    font-size: 16px;
+    min-height: 100px;
+  }
+
+  /* Guestbook: stack labels above fields */
+  .gb-field {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .gb-field label {
+    width: auto;
+    margin-bottom: 2px;
+  }
+
+  .gb-field input,
+  .gb-field textarea {
+    font-size: 16px;
+    padding: 6px;
+  }
+
+  /* Chooser: stack labels above fields */
+  .chooser-form-field {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .chooser-form-field label {
+    width: auto;
+    margin-bottom: 2px;
+  }
+
+  .chooser-form-field input,
+  .chooser-form-field select,
+  .chooser-form-field textarea {
+    font-size: 16px;
+    padding: 6px;
+  }
+
+  .chooser-option {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  /* Webamp */
   #webamp-container {
     position: relative;
     left: 0;
@@ -1854,5 +1967,35 @@ button:active, .mac-button:active {
   #breakout-canvas {
     max-width: 100%;
     height: auto;
+  }
+
+  /* Buttons: bigger touch targets */
+  button, .mac-button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  /* Game & video list items: bigger touch targets */
+  .game-list-item,
+  .video-list-item {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  /* Buddy list: bigger touch targets */
+  .buddy-entry {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .buddy-group-header {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  /* Services: bigger touch targets */
+  .service-header {
+    padding: 10px;
+    font-size: 14px;
   }
 }
