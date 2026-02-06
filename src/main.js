@@ -342,8 +342,13 @@ function initWebamp() {
     return;
   }
 
+  const randomSkin = SKIN_LIBRARY.length > 0
+    ? SKIN_LIBRARY[Math.floor(Math.random() * SKIN_LIBRARY.length)]
+    : null;
+
   const webamp = new Webamp({
     initialTracks: INITIAL_TRACKS,
+    initialSkin: randomSkin ? { url: randomSkin.url } : undefined,
     availableSkins: SKIN_LIBRARY.length > 0 ? SKIN_LIBRARY : undefined,
   });
 
