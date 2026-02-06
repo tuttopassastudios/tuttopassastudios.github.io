@@ -21,8 +21,11 @@ const VIDEO_LIBRARY = [
 // ─── Skin Library ─────────────────────────────────────────────
 // Drop .wsz files into public/skins/ and add entries here.
 const SKIN_LIBRARY = [
-  { url: '/skins/For_The_Birds.wsz', name: 'For The Birds' },
+  { url: '/skins/AlexAmp_Black_Paper.wsz', name: 'AlexAmp Black Paper' },
   { url: '/skins/dexter_amp.wsz', name: 'Dexter Amp' },
+  { url: '/skins/For_The_Birds.wsz', name: 'For The Birds' },
+  { url: '/skins/NapsterAmp.wsz', name: 'NapsterAmp' },
+  { url: '/skins/PSXkin.wsz', name: 'PSXkin' },
   { url: '/skins/slimshdy.wsz', name: 'Slim Shady' },
   { url: '/skins/the_Neverhood_amp.wsz', name: 'The Neverhood' },
 ];
