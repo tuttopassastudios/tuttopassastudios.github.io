@@ -29,7 +29,9 @@ const INITIAL_TRACKS = [
 // ─── Video Library ────────────────────────────────────────────
 // Drop .mp4 files into public/video/ and add entries here.
 const VIDEO_LIBRARY = [
+  { url: '/video/Inflated Logo 001.mp4', title: 'Inflated Logo 001' },
   { url: '/video/RING LOGO TUTTO PASSA 01.mp4', title: 'Ring Logo Tutto Passa 01' },
+  { url: '/video/STROBE NEON SIGN.mp4', title: 'Strobe Neon Sign' },
 ];
 
 // ─── Skin Library ─────────────────────────────────────────────
