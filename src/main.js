@@ -181,6 +181,13 @@ function initDesktopIcons() {
       if (!targetId) return;
       const win = document.getElementById(targetId);
       if (!win) return;
+
+      // Webamp: toggle visibility
+      if (targetId === 'webamp-container') {
+        win.classList.toggle('hidden');
+        return;
+      }
+
       win.classList.remove('hidden');
       win.classList.remove('fullscreen');
       bringToFront(win);

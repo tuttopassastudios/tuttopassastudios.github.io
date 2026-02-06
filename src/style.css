@@ -233,6 +233,24 @@ body.cursor-wait * {
   border-radius: 1px 1px 0 0;
 }
 
+/* Winamp icon */
+.icon-winamp {
+  background: #1a1a1a;
+  border-radius: 2px;
+  box-shadow: inset -2px -2px 0 #000, inset 2px 2px 0 #333;
+  overflow: hidden;
+}
+.icon-winamp::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 10px;
+  width: 12px;
+  height: 24px;
+  background: linear-gradient(135deg, #f5a623 0%, #d4920d 50%, #f5a623 100%);
+  clip-path: polygon(0% 0%, 100% 0%, 30% 45%, 100% 45%, 0% 100%, 0% 100%, 70% 55%, 0% 55%);
+}
+
 /* Folder icon */
 .icon-folder {
   background: #f9d342;
@@ -534,6 +552,10 @@ button:active, .mac-button:active {
 }
 
 /* --- Webamp overrides --- */
+#webamp-container.hidden {
+  display: none;
+}
+
 #webamp-container {
   position: absolute;
   left: 40px;
