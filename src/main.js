@@ -44,6 +44,18 @@ const SKIN_LIBRARY = [
   { url: '/skins/PSXkin.wsz', name: 'PSXkin' },
   { url: '/skins/slimshdy.wsz', name: 'Slim Shady' },
   { url: '/skins/the_Neverhood_amp.wsz', name: 'The Neverhood' },
+  { url: '/skins/Zilver_Chrome.wsz', name: 'Zilver Chrome' },
+  { url: '/skins/Porsche_2000_-_911_Turbo.wsz', name: 'Porsche 911 Turbo' },
+  { url: '/skins/peasncarrots.wsz', name: 'Peas N Carrots' },
+  { url: '/skins/bttf.wsz', name: 'Back to the Future' },
+  { url: '/skins/Metasoft_Archangel.wsz', name: 'Metasoft Archangel' },
+  { url: '/skins/Nicks_Memory.wsz', name: 'Nicks Memory' },
+  { url: '/skins/Powerpuff_Girls_Redux.wsz', name: 'Powerpuff Girls Redux' },
+  { url: '/skins/Windows_like_Amp.wsz', name: 'Windows Like Amp' },
+  { url: '/skins/Garungaha2.wsz', name: 'Garungaha 2' },
+  { url: '/skins/Dread-Snake.wsz', name: 'Dread Snake' },
+  { url: '/skins/d2bnet.wsz', name: 'D2BNet' },
+  { url: '/skins/WindowsXP.wsz', name: 'Windows XP' },
 ];
 
 // ─── Window Management ───────────────────────────────────────
