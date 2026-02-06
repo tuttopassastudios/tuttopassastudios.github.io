@@ -31,6 +31,7 @@ const INITIAL_TRACKS = [
 const GAME_LIBRARY = [
   { url: '/games/interactive_buddy.swf', title: 'Interactive Buddy', aspect: '550 / 400' },
   { url: '/games/impossible_quiz.swf', title: 'The Impossible Quiz', aspect: '550 / 400' },
+  { url: '/games/gunblood.swf', title: 'Gunblood', aspect: '720 / 425' },
 ];
 
 // ─── Video Library ────────────────────────────────────────────
