@@ -578,6 +578,61 @@ body.cursor-wait * {
   display: block;
 }
 
+#game-audio-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: #c0c0c0;
+  border-top: 1px solid #999;
+}
+
+.game-audio-btn {
+  font-size: 14px;
+  line-height: 1;
+  padding: 1px 4px;
+  background: #ddd;
+  border: 1px solid #999;
+  border-radius: 2px;
+  box-shadow: inset -1px -1px 0 #888, inset 1px 1px 0 #fff;
+}
+
+.game-audio-btn:active {
+  box-shadow: inset 1px 1px 0 #888, inset -1px -1px 0 #fff;
+}
+
+#game-volume {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100px;
+  height: 4px;
+  background: #999;
+  border: 1px solid #666;
+  border-radius: 0;
+  outline: none;
+}
+
+#game-volume::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 14px;
+  background: #ddd;
+  border: 1px solid #666;
+  box-shadow: inset -1px -1px 0 #888, inset 1px 1px 0 #fff;
+  cursor: pointer;
+}
+
+#game-volume::-moz-range-thumb {
+  width: 12px;
+  height: 14px;
+  background: #ddd;
+  border: 1px solid #666;
+  box-shadow: inset -1px -1px 0 #888, inset 1px 1px 0 #fff;
+  border-radius: 0;
+  cursor: pointer;
+}
+
 /* --- Scrollbars (Classic Mac Platinum) --- */
 ::-webkit-scrollbar {
   width: 16px;

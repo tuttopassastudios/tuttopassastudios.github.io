@@ -517,6 +517,46 @@ function loadGame(entry) {
   gameWin.querySelector('.title-bar-text').textContent = entry.title;
   gameWin.classList.remove('hidden');
   bringToFront(gameWin);
+
+  // Sync volume to current slider value
+  const slider = document.getElementById('game-volume');
+  if (slider) applyGameVolume(player, Number(slider.value) / 100);
+}
+
+function getGamePlayer() {
+  return document.querySelector('#game-embed ruffle-player');
+}
+
+function applyGameVolume(player, vol) {
+  try { player.ruffle().volume = vol; } catch {}
+}
+
+function initGameAudio() {
+  const muteBtn = document.getElementById('game-mute-btn');
+  const slider = document.getElementById('game-volume');
+  if (!muteBtn || !slider) return;
+
+  let savedVolume = 100;
+
+  slider.addEventListener('input', () => {
+    const vol = Number(slider.value) / 100;
+    const player = getGamePlayer();
+    if (player) applyGameVolume(player, vol);
+    muteBtn.textContent = vol === 0 ? '\u{1F507}' : vol < 0.5 ? '\u{1F509}' : '\u{1F508}';
+  });
+
+  muteBtn.addEventListener('click', () => {
+    const player = getGamePlayer();
+    if (Number(slider.value) > 0) {
+      savedVolume = Number(slider.value);
+      slider.value = 0;
+    } else {
+      slider.value = savedVolume || 100;
+    }
+    const vol = Number(slider.value) / 100;
+    if (player) applyGameVolume(player, vol);
+    muteBtn.textContent = vol === 0 ? '\u{1F507}' : vol < 0.5 ? '\u{1F509}' : '\u{1F508}';
+  });
 }
 
 // ─── Webamp Init ──────────────────────────────────────────────
@@ -1589,6 +1629,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initAboutDialog();
     initVideoList();
     initGameList();
+    initGameAudio();
     initWebamp();
     initHitCounter();
     initMouseTrails();
