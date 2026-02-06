@@ -1,5 +1,5 @@
-import './style.css';
-import Webamp from 'webamp';
+// CSS is linked directly in index.html so it loads even without a bundler.
+// Webamp is loaded via CDN <script> in index.html (window.Webamp).
 
 // ─── Placeholder Tracks ───────────────────────────────────────
 const INITIAL_TRACKS = [
@@ -173,7 +173,8 @@ function animateHitCounter() {
 
 // ─── Webamp Init ──────────────────────────────────────────────
 function initWebamp() {
-  if (!Webamp.browserIsSupported()) {
+  const Webamp = window.Webamp;
+  if (!Webamp || !Webamp.browserIsSupported()) {
     const container = document.getElementById('webamp-container');
     if (container) {
       container.innerHTML =
