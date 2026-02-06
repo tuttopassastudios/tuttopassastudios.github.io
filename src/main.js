@@ -335,7 +335,30 @@ function handleMenuAction(action) {
         ],
       });
       break;
+    case 'new-message':
+      openWindow('mail-window');
+      break;
+    case 'new-sticky':
+      createStickyNote();
+      break;
+    case 'control-panels':
+      openWindow('controlpanel-window');
+      break;
+    case 'chooser':
+      openWindow('chooser-window');
+      break;
+    case 'buddy-list':
+      openWindow('buddy-window');
+      break;
   }
+}
+
+function openWindow(id) {
+  const win = document.getElementById(id);
+  if (!win) return;
+  win.classList.remove('hidden');
+  win.classList.remove('fullscreen');
+  bringToFront(win);
 }
 
 // ─── About Dialog ─────────────────────────────────────────────
@@ -517,7 +540,7 @@ function runBootSequence(onComplete) {
 
 // ─── Screen Saver ─────────────────────────────────────────────
 let screensaverActive = false;
-const IDLE_TIMEOUT = 3 * 60 * 1000; // 3 minutes
+let IDLE_TIMEOUT = 3 * 60 * 1000; // 3 minutes
 let idleTimer = null;
 let ssAnimFrame = null;
 
@@ -609,6 +632,8 @@ function initScreenSaver() {
 }
 
 // ─── Mouse Trails ─────────────────────────────────────────────
+let mouseTrailsEnabled = true;
+
 function initMouseTrails() {
   // Skip on touch/mobile devices
   if (window.matchMedia('(pointer: coarse)').matches) return;
@@ -628,7 +653,7 @@ function initMouseTrails() {
   let lastTime = 0;
 
   document.addEventListener('mousemove', (e) => {
-    if (screensaverActive) return;
+    if (screensaverActive || !mouseTrailsEnabled) return;
 
     const now = Date.now();
     if (now - lastTime < THROTTLE_MS) return;
@@ -669,6 +694,824 @@ function initHitCounter() {
   });
 }
 
+// ═══════════════════════════════════════════════════════════════
+// NEW FEATURES
+// ═══════════════════════════════════════════════════════════════
+
+// ─── 1. Tutto Passa Mail ─────────────────────────────────────
+function initMail() {
+  const sendBtn = document.getElementById('mail-send');
+  const clearBtn = document.getElementById('mail-clear');
+  if (!sendBtn) return;
+
+  sendBtn.addEventListener('click', () => {
+    const from = document.getElementById('mail-from').value.trim();
+    const subject = document.getElementById('mail-subject').value.trim();
+    const body = document.getElementById('mail-body').value.trim();
+
+    if (!from || !body) {
+      showAlert({
+        icon: '✉️',
+        message: 'Please fill in your name and message before sending.',
+        buttons: [{ label: 'OK', isDefault: true }],
+      });
+      return;
+    }
+
+    const mailto = 'mailto:hello@tuttopassastudios.com'
+      + '?subject=' + encodeURIComponent(subject || 'Message from ' + from)
+      + '&body=' + encodeURIComponent('From: ' + from + '\n\n' + body);
+    window.location.href = mailto;
+
+    showAlert({
+      icon: '✉️',
+      message: 'Your email client should open now. If not, email us directly at hello@tuttopassastudios.com',
+      buttons: [{ label: 'OK', isDefault: true }],
+    });
+  });
+
+  clearBtn.addEventListener('click', () => {
+    document.getElementById('mail-from').value = '';
+    document.getElementById('mail-subject').value = '';
+    document.getElementById('mail-body').value = '';
+  });
+}
+
+// ─── 2. SimpleText — Services ────────────────────────────────
+const SERVICES = [
+  {
+    icon: '🎵',
+    title: 'Music Production',
+    description: 'Full-service music production including mixing, mastering, beat-making, and sound design. From concept to final master, we bring your sonic vision to life.',
+  },
+  {
+    icon: '🎨',
+    title: 'Design',
+    description: 'Brand identity, graphic design, album artwork, and visual content creation. We craft distinctive visuals that tell your story.',
+  },
+  {
+    icon: '💻',
+    title: 'Code & Web Development',
+    description: 'Custom websites, web applications, and creative coding projects. Modern tech with a distinctive aesthetic — like this site.',
+  },
+];
+
+function initServices() {
+  const list = document.getElementById('services-list');
+  if (!list) return;
+
+  SERVICES.forEach(svc => {
+    const item = document.createElement('div');
+    item.className = 'service-item';
+
+    const header = document.createElement('div');
+    header.className = 'service-header';
+    header.innerHTML = `<span class="service-arrow">&#9654;</span><span class="service-icon">${svc.icon}</span><span>${svc.title}</span>`;
+
+    const body = document.createElement('div');
+    body.className = 'service-body';
+    body.innerHTML = `<p>${svc.description}</p><span class="service-quote-link" data-service="${svc.title}">Request a Quote &#8594;</span>`;
+
+    header.addEventListener('click', () => item.classList.toggle('open'));
+
+    body.querySelector('.service-quote-link').addEventListener('click', (e) => {
+      e.stopPropagation();
+      openWindow('chooser-window');
+    });
+
+    item.appendChild(header);
+    item.appendChild(body);
+    list.appendChild(item);
+  });
+}
+
+// ─── 3. Buddy List ───────────────────────────────────────────
+const BUDDY_GROUPS = [
+  {
+    name: 'Online',
+    buddies: [
+      { name: 'Instagram', status: 'online', url: 'https://instagram.com/tuttopassastudios' },
+      { name: 'SoundCloud', status: 'online', url: 'https://soundcloud.com/tuttopassastudios' },
+      { name: 'GitHub', status: 'online', url: 'https://github.com/tuttopassastudios' },
+    ],
+  },
+  {
+    name: 'Away',
+    buddies: [
+      { name: 'Email', status: 'away', url: '#', action: 'mail' },
+      { name: 'Twitter / X', status: 'away', url: 'https://x.com/tuttopassastudio' },
+    ],
+  },
+];
+
+function initBuddyList() {
+  const container = document.getElementById('buddy-groups');
+  if (!container) return;
+
+  BUDDY_GROUPS.forEach((group, gi) => {
+    const groupEl = document.createElement('div');
+    groupEl.className = 'buddy-group' + (gi === 0 ? ' open' : '');
+
+    const header = document.createElement('div');
+    header.className = 'buddy-group-header';
+    header.innerHTML = `<span class="buddy-group-arrow">&#9654;</span><span>${group.name}</span><span class="buddy-group-count">(${group.buddies.length})</span>`;
+    header.addEventListener('click', () => groupEl.classList.toggle('open'));
+
+    const items = document.createElement('div');
+    items.className = 'buddy-list-items';
+
+    group.buddies.forEach(buddy => {
+      const entry = document.createElement('a');
+      entry.className = 'buddy-entry';
+      entry.href = buddy.url;
+      if (buddy.action !== 'mail') {
+        entry.target = '_blank';
+        entry.rel = 'noopener noreferrer';
+      }
+      entry.innerHTML = `<span class="buddy-status ${buddy.status}"></span><span class="buddy-name">${buddy.name}</span>`;
+
+      if (buddy.action === 'mail') {
+        entry.addEventListener('click', (e) => {
+          e.preventDefault();
+          openWindow('mail-window');
+        });
+      }
+
+      items.appendChild(entry);
+    });
+
+    groupEl.appendChild(header);
+    groupEl.appendChild(items);
+    container.appendChild(groupEl);
+  });
+}
+
+// ─── 4. Guestbook ────────────────────────────────────────────
+function initGuestbook() {
+  const signBtn = document.getElementById('gb-sign');
+  if (!signBtn) return;
+
+  renderGuestbookEntries();
+
+  signBtn.addEventListener('click', () => {
+    const name = document.getElementById('gb-name').value.trim();
+    const url = document.getElementById('gb-url').value.trim();
+    const message = document.getElementById('gb-message').value.trim();
+
+    if (!name || !message) {
+      showAlert({
+        icon: '📝',
+        message: 'Please enter your name and a message.',
+        buttons: [{ label: 'OK', isDefault: true }],
+      });
+      return;
+    }
+
+    const entries = JSON.parse(localStorage.getItem('tuttopassa-guestbook') || '[]');
+    entries.unshift({
+      name,
+      url: url || '',
+      message,
+      date: new Date().toISOString(),
+    });
+    // Keep max 50 entries
+    if (entries.length > 50) entries.length = 50;
+    localStorage.setItem('tuttopassa-guestbook', JSON.stringify(entries));
+
+    document.getElementById('gb-name').value = '';
+    document.getElementById('gb-url').value = '';
+    document.getElementById('gb-message').value = '';
+
+    renderGuestbookEntries();
+
+    showAlert({
+      icon: '📝',
+      message: 'Thanks for signing the guestbook!',
+      buttons: [{ label: 'OK', isDefault: true }],
+    });
+  });
+}
+
+function renderGuestbookEntries() {
+  const container = document.getElementById('gb-entries');
+  if (!container) return;
+
+  const entries = JSON.parse(localStorage.getItem('tuttopassa-guestbook') || '[]');
+  container.innerHTML = '';
+
+  if (entries.length === 0) {
+    container.innerHTML = '<div class="gb-empty">No entries yet. Be the first to sign!</div>';
+    return;
+  }
+
+  entries.forEach(entry => {
+    const el = document.createElement('div');
+    el.className = 'gb-entry';
+
+    const date = new Date(entry.date);
+    const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+    let html = `<div class="gb-entry-header"><span class="gb-entry-name">${escapeHtml(entry.name)}</span><span class="gb-entry-date">${dateStr}</span></div>`;
+    html += `<div class="gb-entry-message">${escapeHtml(entry.message)}</div>`;
+    if (entry.url) {
+      const safeUrl = escapeHtml(entry.url);
+      html += `<div class="gb-entry-url"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeUrl}</a></div>`;
+    }
+
+    el.innerHTML = html;
+    container.appendChild(el);
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ─── 5. Control Panels ──────────────────────────────────────
+const DESKTOP_PATTERNS = [
+  { name: 'Teal',   colors: ['#5a8a8a', '#70a3a3'] },
+  { name: 'Purple', colors: ['#6a5a8a', '#8370a3'] },
+  { name: 'Rose',   colors: ['#8a5a6a', '#a37083'] },
+  { name: 'Olive',  colors: ['#6a7a5a', '#839370'] },
+  { name: 'Slate',  colors: ['#5a6a7a', '#708393'] },
+  { name: 'Mono',   colors: ['#666666', '#888888'] },
+];
+
+function initControlPanels() {
+  const patternsEl = document.getElementById('cp-patterns');
+  const trailsCb = document.getElementById('cp-trails');
+  const ssTimeoutSel = document.getElementById('cp-ss-timeout');
+  const scanlinesCb = document.getElementById('cp-scanlines');
+  if (!patternsEl) return;
+
+  // Load saved prefs
+  const prefs = JSON.parse(localStorage.getItem('tuttopassa-prefs') || '{}');
+
+  // Patterns
+  DESKTOP_PATTERNS.forEach((pat, i) => {
+    const swatch = document.createElement('div');
+    swatch.className = 'cp-pattern-swatch';
+    swatch.title = pat.name;
+    swatch.style.background = `repeating-conic-gradient(${pat.colors[0]} 0% 25%, ${pat.colors[1]} 0% 50%)`;
+    swatch.style.backgroundSize = '4px 4px';
+    if ((prefs.pattern ?? 0) === i) swatch.classList.add('active');
+
+    swatch.addEventListener('click', () => {
+      patternsEl.querySelectorAll('.cp-pattern-swatch').forEach(s => s.classList.remove('active'));
+      swatch.classList.add('active');
+      applyDesktopPattern(i);
+      prefs.pattern = i;
+      localStorage.setItem('tuttopassa-prefs', JSON.stringify(prefs));
+    });
+
+    patternsEl.appendChild(swatch);
+  });
+
+  // Apply saved pattern
+  if (prefs.pattern != null) applyDesktopPattern(prefs.pattern);
+
+  // Mouse trails
+  if (prefs.trails === false) {
+    mouseTrailsEnabled = false;
+    trailsCb.checked = false;
+  }
+  trailsCb.addEventListener('change', () => {
+    mouseTrailsEnabled = trailsCb.checked;
+    prefs.trails = trailsCb.checked;
+    localStorage.setItem('tuttopassa-prefs', JSON.stringify(prefs));
+  });
+
+  // Screensaver timeout
+  if (prefs.ssTimeout != null) {
+    IDLE_TIMEOUT = prefs.ssTimeout;
+    ssTimeoutSel.value = String(prefs.ssTimeout);
+    resetIdleTimer();
+  }
+  ssTimeoutSel.addEventListener('change', () => {
+    IDLE_TIMEOUT = parseInt(ssTimeoutSel.value, 10);
+    prefs.ssTimeout = IDLE_TIMEOUT;
+    localStorage.setItem('tuttopassa-prefs', JSON.stringify(prefs));
+    resetIdleTimer();
+  });
+
+  // CRT Scanlines
+  if (prefs.scanlines === false) {
+    scanlinesCb.checked = false;
+    document.querySelectorAll('.crt-scanlines').forEach(el => el.style.display = 'none');
+  }
+  scanlinesCb.addEventListener('change', () => {
+    prefs.scanlines = scanlinesCb.checked;
+    localStorage.setItem('tuttopassa-prefs', JSON.stringify(prefs));
+    document.querySelectorAll('.crt-scanlines').forEach(el => {
+      el.style.display = scanlinesCb.checked ? '' : 'none';
+    });
+  });
+}
+
+function applyDesktopPattern(index) {
+  const pat = DESKTOP_PATTERNS[index];
+  if (!pat) return;
+  const desktop = document.getElementById('desktop');
+  desktop.style.backgroundColor = pat.colors[0];
+  desktop.style.backgroundImage = `repeating-conic-gradient(${pat.colors[0]} 0% 25%, ${pat.colors[1]} 0% 50%)`;
+}
+
+// ─── 6. Stickies ─────────────────────────────────────────────
+const STICKY_COLORS = ['yellow', 'pink', 'blue', 'green', 'purple'];
+let stickyCount = 0;
+
+function initStickies() {
+  loadStickies();
+}
+
+function createStickyNote(savedData) {
+  const container = document.getElementById('stickies-container');
+  if (!container) return;
+
+  // Max 6 stickies
+  if (container.children.length >= 6 && !savedData) {
+    showAlert({
+      icon: '📌',
+      message: 'Maximum of 6 sticky notes reached. Close one first.',
+      buttons: [{ label: 'OK', isDefault: true }],
+    });
+    return;
+  }
+
+  const color = savedData ? savedData.color : STICKY_COLORS[stickyCount % STICKY_COLORS.length];
+  const id = savedData ? savedData.id : 'sticky-' + Date.now();
+  stickyCount++;
+
+  const note = document.createElement('div');
+  note.className = `sticky-note sticky-${color}`;
+  note.id = id;
+  note.style.left = savedData ? savedData.x + 'px' : (60 + stickyCount * 20) + 'px';
+  note.style.top = savedData ? savedData.y + 'px' : (80 + stickyCount * 20) + 'px';
+  note.style.zIndex = ++topZ;
+
+  const titlebar = document.createElement('div');
+  titlebar.className = 'sticky-titlebar';
+
+  const closeBtn = document.createElement('div');
+  closeBtn.className = 'sticky-close';
+  closeBtn.textContent = '\u00D7';
+  closeBtn.addEventListener('click', () => {
+    note.remove();
+    saveStickies();
+  });
+
+  titlebar.appendChild(closeBtn);
+
+  const body = document.createElement('div');
+  body.className = 'sticky-body';
+  body.contentEditable = 'true';
+  body.textContent = savedData ? savedData.text : '';
+  body.addEventListener('input', () => saveStickies());
+
+  note.appendChild(titlebar);
+  note.appendChild(body);
+  container.appendChild(note);
+
+  // Dragging
+  if (window.innerWidth >= 768) {
+    let isDragging = false;
+    let startX, startY, origLeft, origTop;
+
+    titlebar.addEventListener('mousedown', (e) => {
+      if (e.target === closeBtn) return;
+      isDragging = true;
+      note.style.zIndex = ++topZ;
+      const rect = note.getBoundingClientRect();
+      origLeft = rect.left;
+      origTop = rect.top;
+      startX = e.clientX;
+      startY = e.clientY;
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      note.style.left = Math.max(0, origLeft + e.clientX - startX) + 'px';
+      note.style.top = Math.max(0, origTop + e.clientY - startY) + 'px';
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        saveStickies();
+      }
+    });
+  }
+
+  if (!savedData) saveStickies();
+}
+
+function saveStickies() {
+  const container = document.getElementById('stickies-container');
+  if (!container) return;
+  const data = [];
+  container.querySelectorAll('.sticky-note').forEach(note => {
+    const colorClass = [...note.classList].find(c => c.startsWith('sticky-') && c !== 'sticky-note');
+    data.push({
+      id: note.id,
+      color: colorClass ? colorClass.replace('sticky-', '') : 'yellow',
+      x: parseInt(note.style.left, 10) || 0,
+      y: parseInt(note.style.top, 10) || 0,
+      text: note.querySelector('.sticky-body').textContent,
+    });
+  });
+  localStorage.setItem('tuttopassa-stickies', JSON.stringify(data));
+}
+
+function loadStickies() {
+  const data = JSON.parse(localStorage.getItem('tuttopassa-stickies') || '[]');
+  data.forEach(s => createStickyNote(s));
+}
+
+// ─── 7. Chooser — Project Request Wizard ─────────────────────
+const CHOOSER_SERVICES = [
+  {
+    name: 'Music Production',
+    subs: ['Mixing', 'Mastering', 'Beat Production', 'Sound Design', 'Recording'],
+  },
+  {
+    name: 'Design',
+    subs: ['Brand Identity', 'Album Artwork', 'Graphic Design', 'Social Media Assets', 'Motion Graphics'],
+  },
+  {
+    name: 'Code & Web Development',
+    subs: ['Website Design', 'Web Application', 'Landing Page', 'E-commerce', 'Creative Coding'],
+  },
+];
+
+let chooserState = { step: 0, service: null, subs: [], contact: {} };
+
+function initChooser() {
+  const stepsEl = document.getElementById('chooser-steps');
+  const nextBtn = document.getElementById('chooser-next');
+  const backBtn = document.getElementById('chooser-back');
+  if (!stepsEl) return;
+
+  renderChooserStep();
+
+  nextBtn.addEventListener('click', () => {
+    if (chooserState.step === 0 && chooserState.service == null) {
+      showAlert({ icon: '👆', message: 'Please select a service.', buttons: [{ label: 'OK', isDefault: true }] });
+      return;
+    }
+    if (chooserState.step === 2) {
+      const name = document.getElementById('chooser-name');
+      const email = document.getElementById('chooser-email');
+      if (name && email && (!name.value.trim() || !email.value.trim())) {
+        showAlert({ icon: '👆', message: 'Please enter your name and email.', buttons: [{ label: 'OK', isDefault: true }] });
+        return;
+      }
+      chooserState.contact = {
+        name: name.value.trim(),
+        email: email.value.trim(),
+        budget: document.getElementById('chooser-budget').value,
+        timeline: document.getElementById('chooser-timeline').value,
+        notes: document.getElementById('chooser-notes').value.trim(),
+      };
+    }
+    if (chooserState.step === 3) {
+      submitChooser();
+      return;
+    }
+    chooserState.step = Math.min(3, chooserState.step + 1);
+    renderChooserStep();
+  });
+
+  backBtn.addEventListener('click', () => {
+    chooserState.step = Math.max(0, chooserState.step - 1);
+    renderChooserStep();
+  });
+}
+
+function renderChooserStep() {
+  const stepsEl = document.getElementById('chooser-steps');
+  const progressBar = document.getElementById('chooser-progress-bar');
+  const stepLabel = document.getElementById('chooser-step-label');
+  const nextBtn = document.getElementById('chooser-next');
+  const backBtn = document.getElementById('chooser-back');
+
+  const step = chooserState.step;
+  progressBar.style.width = ((step + 1) * 25) + '%';
+  stepLabel.textContent = `Step ${step + 1} of 4`;
+  backBtn.disabled = step === 0;
+  nextBtn.textContent = step === 3 ? 'Submit' : 'Next';
+
+  stepsEl.innerHTML = '';
+  const div = document.createElement('div');
+  div.className = 'chooser-step active';
+
+  if (step === 0) {
+    div.innerHTML = '<h2>What service do you need?</h2>';
+    CHOOSER_SERVICES.forEach((svc, i) => {
+      const opt = document.createElement('div');
+      opt.className = 'chooser-option' + (chooserState.service === i ? ' selected' : '');
+      opt.innerHTML = `<input type="radio" name="chooser-svc" ${chooserState.service === i ? 'checked' : ''} /><span>${svc.name}</span>`;
+      opt.addEventListener('click', () => {
+        chooserState.service = i;
+        chooserState.subs = [];
+        stepsEl.querySelectorAll('.chooser-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        opt.querySelector('input').checked = true;
+      });
+      div.appendChild(opt);
+    });
+  } else if (step === 1) {
+    const svc = CHOOSER_SERVICES[chooserState.service];
+    div.innerHTML = `<h2>${svc.name} — What do you need?</h2>`;
+    svc.subs.forEach((sub, i) => {
+      const opt = document.createElement('div');
+      opt.className = 'chooser-option' + (chooserState.subs.includes(i) ? ' selected' : '');
+      opt.innerHTML = `<input type="checkbox" ${chooserState.subs.includes(i) ? 'checked' : ''} /><span>${sub}</span>`;
+      opt.addEventListener('click', () => {
+        const idx = chooserState.subs.indexOf(i);
+        if (idx >= 0) {
+          chooserState.subs.splice(idx, 1);
+          opt.classList.remove('selected');
+          opt.querySelector('input').checked = false;
+        } else {
+          chooserState.subs.push(i);
+          opt.classList.add('selected');
+          opt.querySelector('input').checked = true;
+        }
+      });
+      div.appendChild(opt);
+    });
+  } else if (step === 2) {
+    div.innerHTML = `<h2>Tell us about your project</h2>
+      <div class="chooser-form-field"><label>Name *</label><input type="text" id="chooser-name" value="${escapeHtml(chooserState.contact.name || '')}" /></div>
+      <div class="chooser-form-field"><label>Email *</label><input type="email" id="chooser-email" value="${escapeHtml(chooserState.contact.email || '')}" /></div>
+      <div class="chooser-form-field"><label>Budget</label><select id="chooser-budget">
+        <option value="">Select...</option>
+        <option value="< $500">Under $500</option>
+        <option value="$500 - $1000">$500 – $1,000</option>
+        <option value="$1000 - $5000">$1,000 – $5,000</option>
+        <option value="$5000+">$5,000+</option>
+      </select></div>
+      <div class="chooser-form-field"><label>Timeline</label><select id="chooser-timeline">
+        <option value="">Select...</option>
+        <option value="ASAP">ASAP</option>
+        <option value="1-2 weeks">1–2 weeks</option>
+        <option value="1 month">1 month</option>
+        <option value="Flexible">Flexible</option>
+      </select></div>
+      <div class="chooser-form-field"><label>Notes</label><textarea id="chooser-notes" rows="3" placeholder="Anything else we should know?">${escapeHtml(chooserState.contact.notes || '')}</textarea></div>`;
+
+    // Restore budget/timeline selections
+    setTimeout(() => {
+      if (chooserState.contact.budget) document.getElementById('chooser-budget').value = chooserState.contact.budget;
+      if (chooserState.contact.timeline) document.getElementById('chooser-timeline').value = chooserState.contact.timeline;
+    }, 0);
+  } else if (step === 3) {
+    const svc = CHOOSER_SERVICES[chooserState.service];
+    const subNames = chooserState.subs.map(i => svc.subs[i]).join(', ') || 'None selected';
+    div.innerHTML = `<h2>Review Your Request</h2>
+      <dl class="chooser-review">
+        <dt>Service</dt><dd>${svc.name}</dd>
+        <dt>Details</dt><dd>${subNames}</dd>
+        <dt>Name</dt><dd>${escapeHtml(chooserState.contact.name)}</dd>
+        <dt>Email</dt><dd>${escapeHtml(chooserState.contact.email)}</dd>
+        <dt>Budget</dt><dd>${chooserState.contact.budget || 'Not specified'}</dd>
+        <dt>Timeline</dt><dd>${chooserState.contact.timeline || 'Not specified'}</dd>
+        <dt>Notes</dt><dd>${escapeHtml(chooserState.contact.notes) || 'None'}</dd>
+      </dl>`;
+  }
+
+  stepsEl.appendChild(div);
+}
+
+function submitChooser() {
+  const svc = CHOOSER_SERVICES[chooserState.service];
+  const subNames = chooserState.subs.map(i => svc.subs[i]).join(', ') || 'None selected';
+  const c = chooserState.contact;
+
+  const subject = `Project Request: ${svc.name}`;
+  const body = `Service: ${svc.name}\nDetails: ${subNames}\n\nName: ${c.name}\nEmail: ${c.email}\nBudget: ${c.budget || 'Not specified'}\nTimeline: ${c.timeline || 'Not specified'}\nNotes: ${c.notes || 'None'}`;
+
+  const mailto = 'mailto:hello@tuttopassastudios.com'
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body=' + encodeURIComponent(body);
+  window.location.href = mailto;
+
+  showAlert({
+    icon: '📋',
+    message: 'Your email client should open with the project request. Thanks for reaching out!',
+    buttons: [{ label: 'OK', isDefault: true, action: () => {
+      chooserState = { step: 0, service: null, subs: [], contact: {} };
+      renderChooserStep();
+    }}],
+  });
+}
+
+// ─── 8. Easter Egg — Breakout Game ───────────────────────────
+let breakoutGame = null;
+let easterEggBuffer = '';
+
+function initEasterEgg() {
+  document.addEventListener('keydown', (e) => {
+    // Don't trigger if typing in a field
+    const tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.contentEditable === 'true') return;
+
+    easterEggBuffer += e.key.toLowerCase();
+    if (easterEggBuffer.length > 10) easterEggBuffer = easterEggBuffer.slice(-10);
+
+    if (easterEggBuffer.endsWith('game')) {
+      easterEggBuffer = '';
+      openWindow('breakout-window');
+      startBreakout();
+    }
+  });
+}
+
+function initBreakoutWindow() {
+  const startOverlay = document.getElementById('breakout-start');
+  if (!startOverlay) return;
+
+  // Load high score
+  const hi = parseInt(localStorage.getItem('tuttopassa-breakout-hi') || '0', 10);
+  document.getElementById('breakout-high').textContent = 'High: ' + hi;
+
+  startOverlay.addEventListener('click', () => {
+    startBreakout();
+  });
+}
+
+function startBreakout() {
+  const canvas = document.getElementById('breakout-canvas');
+  const ctx = canvas.getContext('2d');
+  const startOverlay = document.getElementById('breakout-start');
+  startOverlay.classList.add('hidden');
+
+  // Stop previous game loop
+  if (breakoutGame) cancelAnimationFrame(breakoutGame);
+
+  const W = canvas.width;
+  const H = canvas.height;
+
+  // Game state
+  const paddle = { x: W / 2 - 30, y: H - 20, w: 60, h: 8 };
+  const ball = { x: W / 2, y: H - 35, dx: 2.5, dy: -2.5, r: 5 };
+  let score = 0;
+  let lives = 3;
+
+  // Bricks
+  const COLS = 8;
+  const ROWS = 5;
+  const BRICK_W = (W - 20) / COLS;
+  const BRICK_H = 14;
+  const bricks = [];
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      bricks.push({ x: 10 + c * BRICK_W, y: 30 + r * (BRICK_H + 2), w: BRICK_W - 2, h: BRICK_H, alive: true });
+    }
+  }
+
+  // Audio context for bleeps
+  let audioCtx = null;
+  function bleep(freq, dur) {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = freq;
+      gain.gain.value = 0.08;
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + dur);
+    } catch (_) {}
+  }
+
+  // Mouse/touch control
+  function onMove(e) {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    paddle.x = Math.max(0, Math.min(W - paddle.w, (clientX - rect.left) * (W / rect.width) - paddle.w / 2));
+  }
+  canvas.addEventListener('mousemove', onMove);
+  canvas.addEventListener('touchmove', (e) => { e.preventDefault(); onMove(e); }, { passive: false });
+
+  function updateHUD() {
+    document.getElementById('breakout-score').textContent = 'Score: ' + score;
+    document.getElementById('breakout-lives').textContent = 'Lives: ' + lives;
+  }
+
+  function gameOver(won) {
+    cancelAnimationFrame(breakoutGame);
+    breakoutGame = null;
+
+    const hi = Math.max(score, parseInt(localStorage.getItem('tuttopassa-breakout-hi') || '0', 10));
+    localStorage.setItem('tuttopassa-breakout-hi', String(hi));
+    document.getElementById('breakout-high').textContent = 'High: ' + hi;
+
+    ctx.fillStyle = '#fff';
+    ctx.font = "bold 16px 'Chicago', 'Geneva', sans-serif";
+    ctx.textAlign = 'center';
+    ctx.fillText(won ? 'YOU WIN!' : 'GAME OVER', W / 2, H / 2);
+    ctx.font = "12px 'Chicago', 'Geneva', sans-serif";
+    ctx.fillText('Score: ' + score, W / 2, H / 2 + 20);
+
+    startOverlay.classList.remove('hidden');
+    startOverlay.textContent = 'Click to Retry';
+
+    canvas.removeEventListener('mousemove', onMove);
+  }
+
+  function loop() {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+
+    // Draw bricks
+    bricks.forEach(b => {
+      if (!b.alive) return;
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(b.x, b.y, b.w, b.h);
+    });
+
+    // Draw paddle
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
+
+    // Draw ball
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Move ball
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+
+    // Wall bouncing
+    if (ball.x - ball.r <= 0 || ball.x + ball.r >= W) {
+      ball.dx = -ball.dx;
+      bleep(300, 0.05);
+    }
+    if (ball.y - ball.r <= 0) {
+      ball.dy = -ball.dy;
+      bleep(300, 0.05);
+    }
+
+    // Bottom — lose life
+    if (ball.y + ball.r >= H) {
+      lives--;
+      updateHUD();
+      if (lives <= 0) {
+        gameOver(false);
+        return;
+      }
+      bleep(150, 0.2);
+      ball.x = W / 2;
+      ball.y = H - 35;
+      ball.dx = 2.5 * (Math.random() > 0.5 ? 1 : -1);
+      ball.dy = -2.5;
+    }
+
+    // Paddle collision
+    if (ball.dy > 0 && ball.y + ball.r >= paddle.y && ball.y + ball.r <= paddle.y + paddle.h &&
+        ball.x >= paddle.x && ball.x <= paddle.x + paddle.w) {
+      ball.dy = -ball.dy;
+      // Angle based on hit position
+      const hitPos = (ball.x - paddle.x) / paddle.w;
+      ball.dx = 4 * (hitPos - 0.5);
+      bleep(440, 0.05);
+    }
+
+    // Brick collision
+    let allDead = true;
+    bricks.forEach(b => {
+      if (!b.alive) return;
+      allDead = false;
+      if (ball.x + ball.r > b.x && ball.x - ball.r < b.x + b.w &&
+          ball.y + ball.r > b.y && ball.y - ball.r < b.y + b.h) {
+        b.alive = false;
+        ball.dy = -ball.dy;
+        score += 10;
+        updateHUD();
+        bleep(660, 0.05);
+      }
+    });
+
+    if (allDead) {
+      gameOver(true);
+      return;
+    }
+
+    breakoutGame = requestAnimationFrame(loop);
+  }
+
+  updateHUD();
+  loop();
+}
+
 // ─── Main Init ────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   // Clock starts immediately
@@ -688,6 +1531,17 @@ document.addEventListener('DOMContentLoaded', () => {
     initHitCounter();
     initMouseTrails();
     initScreenSaver();
+
+    // New features
+    initMail();
+    initServices();
+    initBuddyList();
+    initGuestbook();
+    initControlPanels();
+    initStickies();
+    initChooser();
+    initBreakoutWindow();
+    initEasterEgg();
 
     const finderWindow = document.getElementById('finder-window');
     if (finderWindow) bringToFront(finderWindow);
