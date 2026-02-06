@@ -327,19 +327,34 @@ html, body {
   cursor: pointer;
   flex-shrink: 0;
   z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  line-height: 1;
+  color: #000;
 }
 
 .title-btn:hover {
   background: #000;
+  color: #fff;
 }
 
-.close-btn {
-  border-radius: 0;
+.close-btn::after {
+  content: '\00D7';
+  font-size: 10px;
+  font-weight: bold;
 }
 
 .zoom-btn {
   position: absolute;
   right: 4px;
+}
+
+.zoom-btn::after {
+  content: '\2922';
+  font-size: 9px;
+  font-weight: bold;
 }
 
 /* Window content area */
