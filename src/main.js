@@ -17,6 +17,13 @@ const INITIAL_TRACKS = [
     },
     url: '/audio/JUST CANT GET ENOUGH V2.m4a',
   },
+  {
+    metaData: {
+      artist: 'Tutto Passa Studios',
+      title: 'slave4u v2',
+    },
+    url: '/audio/slave4u v2.m4a',
+  },
 ];
 
 // ─── Video Library ────────────────────────────────────────────
