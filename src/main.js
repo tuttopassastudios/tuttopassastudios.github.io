@@ -7,9 +7,9 @@ const INITIAL_TRACKS = [
   {
     metaData: {
       artist: 'Tutto Passa Studios',
-      title: 'Track 1 — Add your MP3s to public/audio/',
+      title: 'Just Can\'t Get Enough V2',
     },
-    url: '/audio/track1.mp3',
+    url: '/audio/JUST CANT GET ENOUGH V2.m4a',
   },
 ];
 
