@@ -185,6 +185,10 @@
           <div class="icon-image icon-game"></div>
           <span class="icon-label">Games</span>
         </div>
+        <div class="desktop-icon" data-window="" data-action-icon="virus-alert">
+          <div class="icon-image icon-virus-folder"></div>
+          <span class="icon-label">Party Cache</span>
+        </div>
         <div class="desktop-icon" data-window="">
           <div class="icon-image icon-trash"></div>
           <span class="icon-label">Trash</span>
@@ -462,6 +466,103 @@
             <span id="breakout-high">High: 0</span>
           </div>
           <div class="breakout-start" id="breakout-start">Click to Start</div>
+        </div>
+      </div>
+
+      <!-- ─── Virus Alert Window ─── -->
+      <div class="mac-window hidden" id="virus-alert-window" style="left:120px;top:80px;width:420px;">
+        <div class="window-title-bar">
+          <div class="title-btn close-btn"></div>
+          <div class="title-bar-text">System Alert — Virus Found!</div>
+          <div class="title-btn zoom-btn"></div>
+        </div>
+        <div class="window-content virus-alert-content">
+          <div class="virus-alert-body">
+            <div class="virus-alert-icon"><span class="blink">⚠️</span></div>
+            <div class="virus-alert-text">
+              <p class="virus-alert-title">MUSIC VIRUS DETECTED</p>
+              <p>Your system has been infected with <strong>PartyWorm.DJ</strong>. Danceable frequencies detected in your audio buffer. Immediate action required.</p>
+            </div>
+          </div>
+          <div class="virus-alert-buttons">
+            <button class="mac-button default-btn" id="virus-btn-cleaner">Run DJ Cleaner</button>
+            <button class="mac-button" id="virus-btn-allow">Allow Party Process</button>
+            <button class="mac-button" id="virus-btn-dispatch">Dispatch Local DJ Anyway</button>
+          </div>
+          <p class="virus-alert-disclaimer">This is a joke ad. Your Mac is probably fine.</p>
+        </div>
+      </div>
+
+      <!-- ─── Virus Scan Overlay ─── -->
+      <div id="virus-scan-overlay" class="hidden">
+        <div class="scan-terminal">
+          <div class="scan-header">TP ANTIVIRUS v4.20 — FULL SYSTEM SCAN</div>
+          <div class="scan-log" id="scan-log"></div>
+          <div class="scan-progress-container">
+            <div class="scan-progress-bar" id="scan-progress-bar"></div>
+          </div>
+          <div class="scan-countdown" id="scan-countdown">Estimated time remaining: calculating...</div>
+          <div class="scan-buttons">
+            <button class="mac-button default-btn" id="scan-btn-ok">OK (Dispatch DJ Now)</button>
+            <button class="mac-button" id="scan-btn-cancel">Cancel (Party Anyway)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── DJ Dispatch Window ─── -->
+      <div class="mac-window hidden" id="dj-dispatch-window" style="left:100px;top:60px;width:440px;">
+        <div class="window-title-bar">
+          <div class="title-btn close-btn"></div>
+          <div class="title-bar-text">DJ Dispatch System v1.0</div>
+          <div class="title-btn zoom-btn"></div>
+        </div>
+        <div class="window-content dispatch-content">
+          <p class="dispatch-header">Scanning user preferences...</p>
+          <div class="dispatch-scan-lines" id="dispatch-scan-lines"></div>
+          <div class="dispatch-result hidden" id="dispatch-result">
+            <div class="content-divider"></div>
+            <p class="dispatch-match">Best-match DJ located within 5 miles.</p>
+            <p class="dispatch-bass-label">Select bass level for dispatch:</p>
+            <div class="dispatch-bass-options">
+              <button class="mac-button dispatch-bass-btn" data-bass="LOW">LOW</button>
+              <button class="mac-button dispatch-bass-btn" data-bass="MEDIUM">MEDIUM</button>
+              <button class="mac-button default-btn dispatch-bass-btn" data-bass="MAX">MAX</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Book a DJ Window ─── -->
+      <div class="mac-window hidden" id="book-dj-window" style="left:140px;top:50px;width:460px;">
+        <div class="window-title-bar">
+          <div class="title-btn close-btn"></div>
+          <div class="title-bar-text">Book a DJ — Tutto Passa Studios</div>
+          <div class="title-btn zoom-btn"></div>
+        </div>
+        <div class="window-content book-dj-content">
+          <h1>Book a DJ</h1>
+          <p class="subtitle">Fill out the form below and we'll get back to you.</p>
+          <div class="content-divider"></div>
+          <div class="chooser-form-field">
+            <label>Name *</label>
+            <input type="text" id="book-dj-name" placeholder="Your name" />
+          </div>
+          <div class="chooser-form-field">
+            <label>Email *</label>
+            <input type="email" id="book-dj-email" placeholder="your@email.com" />
+          </div>
+          <div class="chooser-form-field">
+            <label>Event Date</label>
+            <input type="date" id="book-dj-date" />
+          </div>
+          <div class="chooser-form-field">
+            <label>Notes</label>
+            <textarea id="book-dj-notes" rows="3" placeholder="Tell us about your event..."></textarea>
+          </div>
+          <div class="book-dj-actions">
+            <button class="mac-button default-btn" id="book-dj-submit">Send Booking Request</button>
+          </div>
+          <div class="book-dj-footer">Powered by Tutto Passa Studios</div>
         </div>
       </div>
 

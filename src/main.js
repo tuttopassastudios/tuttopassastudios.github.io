@@ -363,6 +363,9 @@ function handleMenuAction(action) {
     case 'buddy-list':
       openWindow('buddy-window');
       break;
+    case 'virus-alert':
+      triggerVirusAlert();
+      break;
   }
 }
 
@@ -1422,6 +1425,7 @@ const MOC_ITEMS = [
   { label: 'Stickies',       icon: 'icon-stickies',      window: '',               special: 'sticky' },
   { label: 'Control Panels', icon: 'icon-controlpanel',  window: 'controlpanel-window' },
   { label: 'Chooser',        icon: 'icon-chooser',       window: 'chooser-window' },
+  { label: 'Party Cache',    icon: 'icon-virus-folder',  window: '',               special: 'virus-alert' },
 ];
 
 function initMapOfContent() {
@@ -1455,6 +1459,10 @@ function initMapOfContent() {
         createStickyNote();
         return;
       }
+      if (item.special === 'virus-alert') {
+        triggerVirusAlert();
+        return;
+      }
       if (item.window) {
         openWindow(item.window);
       }
@@ -1462,6 +1470,393 @@ function initMapOfContent() {
 
     grid.appendChild(el);
   });
+}
+
+// ─── 8b. Virus Alert / DJ Promo System ───────────────────────
+const VIRUS_SCAN_LINES = [
+  '> Scanning /System/Library/Funk...',
+  '> WARNING: disco_ball.dll loaded into memory',
+  '> Detected: BassBoost.trojan (severity: FUNKY)',
+  '> Quarantining groove_engine.kext... FAILED',
+  '> /usr/local/bin/party --force-start ACTIVE',
+  '> TCP connection to dj-dispatch.local:808 ESTABLISHED',
+  '> Analyzing waveform: 128 BPM detected',
+  '> WARNING: Subwoofer driver unsigned',
+  '> Found: 47 instances of unresolved house music',
+  '> Scanning System Preferences for aux cable...',
+  '> CRITICAL: Dance floor protocol buffer overflow',
+  '> /var/log/vibes.log — 2,048 entries (all positive)',
+  '> Attempting to terminate groove_daemon... ACCESS DENIED',
+  '> Firewall exception: port 4/4 (time signature)',
+  '> HeapDump: 99% allocated to sick_drops',
+  '> Resolving DNS for partytown.local...',
+  '> WARNING: Headphone jack emitting sparks',
+  '> Scan complete: 0 threats, 1 party imminent',
+  '> Recommended action: DISPATCH DJ IMMEDIATELY',
+];
+
+const DJ_FAKE_PREFS = {
+  bassLevels: ['Subsonic', 'Earthquake', 'Neighborhood Complaint', 'Geneva Convention Violation', 'Yes'],
+  postcodes: ['SW1A 1AA', 'E1 6AN', 'W1D 3AF', 'N1 9GU', 'SE1 7PB', 'EC2R 8AH'],
+  danceScores: ['87/100', '92/100', '76/100', '99/100', '100/100 (LEGENDARY)'],
+  genres: ['House', 'Techno', 'Garage', 'Drum & Bass', 'Disco', 'Afrobeats'],
+  readiness: ['Armed & Dangerous', 'Turntables Hot', 'Vinyl Loaded', 'Crates Ready'],
+};
+
+function randomFrom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+let virusAudioCtx = null;
+
+function virusBeep() {
+  try {
+    if (!virusAudioCtx) virusAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = virusAudioCtx.createOscillator();
+    const gain = virusAudioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.value = 880;
+    gain.gain.value = 0.1;
+    osc.connect(gain);
+    gain.connect(virusAudioCtx.destination);
+    osc.start();
+    osc.stop(virusAudioCtx.currentTime + 0.15);
+    setTimeout(() => {
+      const osc2 = virusAudioCtx.createOscillator();
+      const gain2 = virusAudioCtx.createGain();
+      osc2.type = 'square';
+      osc2.frequency.value = 660;
+      gain2.gain.value = 0.1;
+      osc2.connect(gain2);
+      gain2.connect(virusAudioCtx.destination);
+      osc2.start();
+      osc2.stop(virusAudioCtx.currentTime + 0.15);
+    }, 180);
+  } catch (_) {}
+}
+
+function virusScratch() {
+  try {
+    if (!virusAudioCtx) virusAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = virusAudioCtx.createOscillator();
+    const gain = virusAudioCtx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(600, virusAudioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(100, virusAudioCtx.currentTime + 0.3);
+    gain.gain.setValueAtTime(0.08, virusAudioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, virusAudioCtx.currentTime + 0.3);
+    osc.connect(gain);
+    gain.connect(virusAudioCtx.destination);
+    osc.start();
+    osc.stop(virusAudioCtx.currentTime + 0.3);
+  } catch (_) {}
+}
+
+function triggerVirusAlert() {
+  virusBeep();
+  openWindow('virus-alert-window');
+}
+
+let scanTimers = [];
+
+function clearScanTimers() {
+  scanTimers.forEach(t => clearTimeout(t));
+  scanTimers = [];
+}
+
+function startVirusScan() {
+  // Hide virus alert window
+  const alertWin = document.getElementById('virus-alert-window');
+  if (alertWin) {
+    alertWin.classList.add('hidden');
+    alertWin.classList.remove('active');
+  }
+
+  // Show overlay
+  const overlay = document.getElementById('virus-scan-overlay');
+  overlay.classList.remove('hidden');
+
+  const log = document.getElementById('scan-log');
+  const progressBar = document.getElementById('scan-progress-bar');
+  const countdown = document.getElementById('scan-countdown');
+
+  log.innerHTML = '';
+  progressBar.style.width = '0%';
+
+  // Typewriter scan lines
+  VIRUS_SCAN_LINES.forEach((line, i) => {
+    const t = setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'scan-log-line';
+      el.textContent = line;
+      log.appendChild(el);
+      log.scrollTop = log.scrollHeight;
+
+      // Update progress
+      const pct = Math.round(((i + 1) / VIRUS_SCAN_LINES.length) * 100);
+      progressBar.style.width = pct + '%';
+    }, (i + 1) * (300 + Math.random() * 400));
+    scanTimers.push(t);
+  });
+
+  // Start countdown
+  startVirusCountdown(countdown);
+}
+
+function startVirusCountdown(el) {
+  let hours = 47;
+  let minutes = 59;
+  let seconds = 59;
+  let phase = 0; // 0=hours, 1=minutes, 2=seconds, 3=final
+
+  function update() {
+    if (phase === 0) {
+      el.textContent = `Estimated time remaining: ${hours}h ${minutes}m ${seconds}s`;
+      hours -= Math.floor(Math.random() * 5) + 3;
+      if (hours <= 0) {
+        hours = 0;
+        phase = 1;
+      }
+      const t = setTimeout(update, 80 + Math.random() * 120);
+      scanTimers.push(t);
+    } else if (phase === 1) {
+      el.textContent = `Estimated time remaining: ${minutes}m ${seconds}s`;
+      minutes -= Math.floor(Math.random() * 4) + 2;
+      if (minutes <= 0) {
+        minutes = 0;
+        phase = 2;
+      }
+      const t = setTimeout(update, 150 + Math.random() * 200);
+      scanTimers.push(t);
+    } else if (phase === 2) {
+      el.textContent = `Estimated time remaining: ${seconds}s`;
+      seconds -= Math.floor(Math.random() * 3) + 1;
+      if (seconds <= 5) {
+        seconds = 5;
+        phase = 3;
+      }
+      const t = setTimeout(update, 300 + Math.random() * 400);
+      scanTimers.push(t);
+    } else if (phase === 3) {
+      el.textContent = `Estimated time remaining: ${seconds}s`;
+      seconds--;
+      if (seconds <= 0) {
+        el.textContent = '>>> PARTY IMMINENT <<<';
+        el.style.fontWeight = 'bold';
+        el.style.textShadow = '0 0 8px #00ff00';
+        return;
+      }
+      const t = setTimeout(update, 800 + Math.random() * 1200);
+      scanTimers.push(t);
+    }
+  }
+  update();
+}
+
+function closeScanOverlay() {
+  clearScanTimers();
+  const overlay = document.getElementById('virus-scan-overlay');
+  overlay.classList.add('hidden');
+  const countdown = document.getElementById('scan-countdown');
+  countdown.style.fontWeight = '';
+  countdown.style.textShadow = '';
+}
+
+function openDJDispatch() {
+  closeScanOverlay();
+  virusScratch();
+  openWindow('dj-dispatch-window');
+
+  const linesEl = document.getElementById('dispatch-scan-lines');
+  const resultEl = document.getElementById('dispatch-result');
+  linesEl.innerHTML = '';
+  resultEl.classList.add('hidden');
+
+  const fakeLines = [
+    { label: 'Bass Preference', value: randomFrom(DJ_FAKE_PREFS.bassLevels) },
+    { label: 'Nearest Postcode', value: randomFrom(DJ_FAKE_PREFS.postcodes) },
+    { label: 'Dance Score', value: randomFrom(DJ_FAKE_PREFS.danceScores) },
+    { label: 'Preferred Genre', value: randomFrom(DJ_FAKE_PREFS.genres) },
+    { label: 'DJ Readiness', value: randomFrom(DJ_FAKE_PREFS.readiness) },
+  ];
+
+  fakeLines.forEach((line, i) => {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'dispatch-scan-line';
+      el.innerHTML = `<span class="dispatch-scan-label">${line.label}:</span><span class="dispatch-scan-value">${line.value}</span>`;
+      linesEl.appendChild(el);
+
+      if (i === fakeLines.length - 1) {
+        setTimeout(() => {
+          resultEl.classList.remove('hidden');
+        }, 600);
+      }
+    }, (i + 1) * 800);
+  });
+}
+
+function openBookDJ() {
+  // Close dispatch window
+  const dispatch = document.getElementById('dj-dispatch-window');
+  if (dispatch) {
+    dispatch.classList.add('hidden');
+    dispatch.classList.remove('active');
+  }
+
+  const bookWin = document.getElementById('book-dj-window');
+  if (!bookWin) return;
+
+  bookWin.classList.remove('hidden');
+  bookWin.classList.add('book-dj-slide-in');
+  bringToFront(bookWin);
+
+  // Remove animation class after it completes
+  setTimeout(() => bookWin.classList.remove('book-dj-slide-in'), 400);
+}
+
+function submitBookDJ() {
+  const name = document.getElementById('book-dj-name').value.trim();
+  const email = document.getElementById('book-dj-email').value.trim();
+  const date = document.getElementById('book-dj-date').value;
+  const notes = document.getElementById('book-dj-notes').value.trim();
+
+  if (!name || !email) {
+    showAlert({
+      icon: '🎧',
+      message: 'Please enter your name and email to book a DJ.',
+      buttons: [{ label: 'OK', isDefault: true }],
+    });
+    return;
+  }
+
+  const subject = 'DJ Booking Request';
+  const body = `Name: ${name}\nEmail: ${email}\nEvent Date: ${date || 'Not specified'}\nNotes: ${notes || 'None'}`;
+  const mailto = 'mailto:hello@tuttopassastudios.com'
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body=' + encodeURIComponent(body);
+  window.location.href = mailto;
+
+  showAlert({
+    icon: '🎧',
+    message: 'Your email client should open with the booking request. See you on the dance floor!',
+    buttons: [{ label: 'OK', isDefault: true, action: () => {
+      document.getElementById('book-dj-name').value = '';
+      document.getElementById('book-dj-email').value = '';
+      document.getElementById('book-dj-date').value = '';
+      document.getElementById('book-dj-notes').value = '';
+    }}],
+  });
+}
+
+function initVirusTrashInteraction() {
+  if (window.innerWidth < 768) return;
+
+  const trashIcon = document.querySelector('.icon-trash')?.closest('.desktop-icon');
+  const virusWin = document.getElementById('virus-alert-window');
+  if (!trashIcon || !virusWin) return;
+
+  let wobbled = false;
+
+  document.addEventListener('mousemove', () => {
+    if (virusWin.classList.contains('hidden')) {
+      wobbled = false;
+      return;
+    }
+
+    const winRect = virusWin.getBoundingClientRect();
+    const trashRect = trashIcon.getBoundingClientRect();
+
+    const dx = (winRect.left + winRect.width / 2) - (trashRect.left + trashRect.width / 2);
+    const dy = (winRect.top + winRect.height / 2) - (trashRect.top + trashRect.height / 2);
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < 120 && !wobbled) {
+      wobbled = true;
+      trashIcon.classList.add('trash-wobble');
+      setTimeout(() => trashIcon.classList.remove('trash-wobble'), 500);
+
+      showAlert({
+        icon: '🗑️',
+        message: 'You can\'t eject the party. The party ejects YOU.',
+        buttons: [{ label: 'Fair Enough', isDefault: true }],
+      });
+    } else if (dist >= 150) {
+      wobbled = false;
+    }
+  });
+}
+
+function initVirusKeyboardDismiss() {
+  document.addEventListener('keydown', (e) => {
+    const tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.contentEditable === 'true') return;
+
+    const isEscape = e.key === 'Escape';
+    const isCmdW = (e.metaKey || e.ctrlKey) && e.key === 'w';
+
+    if (!isEscape && !isCmdW) return;
+
+    const overlay = document.getElementById('virus-scan-overlay');
+    const alertWin = document.getElementById('virus-alert-window');
+    const dispatchWin = document.getElementById('dj-dispatch-window');
+    const bookWin = document.getElementById('book-dj-window');
+
+    const anyOpen = !overlay.classList.contains('hidden') ||
+      !alertWin.classList.contains('hidden') ||
+      !dispatchWin.classList.contains('hidden') ||
+      !bookWin.classList.contains('hidden');
+
+    if (!anyOpen) return;
+
+    e.preventDefault();
+
+    // Close all virus windows
+    closeScanOverlay();
+    alertWin.classList.add('hidden');
+    alertWin.classList.remove('active');
+    dispatchWin.classList.add('hidden');
+    dispatchWin.classList.remove('active');
+    bookWin.classList.add('hidden');
+    bookWin.classList.remove('active');
+
+    showAlert({
+      icon: '🎵',
+      message: 'Sabotaged by User. Party continues anyway.',
+      buttons: [{ label: 'OK', isDefault: true }],
+    });
+  });
+}
+
+function initVirusAlertSystem() {
+  // Wire virus alert buttons
+  const btnCleaner = document.getElementById('virus-btn-cleaner');
+  const btnAllow = document.getElementById('virus-btn-allow');
+  const btnDispatch = document.getElementById('virus-btn-dispatch');
+
+  if (btnCleaner) btnCleaner.addEventListener('click', startVirusScan);
+  if (btnAllow) btnAllow.addEventListener('click', startVirusScan);
+  if (btnDispatch) btnDispatch.addEventListener('click', startVirusScan);
+
+  // Wire scan overlay buttons
+  const scanOk = document.getElementById('scan-btn-ok');
+  const scanCancel = document.getElementById('scan-btn-cancel');
+
+  if (scanOk) scanOk.addEventListener('click', openDJDispatch);
+  if (scanCancel) scanCancel.addEventListener('click', openDJDispatch);
+
+  // Wire bass level buttons
+  document.querySelectorAll('.dispatch-bass-btn').forEach(btn => {
+    btn.addEventListener('click', openBookDJ);
+  });
+
+  // Wire book DJ submit
+  const submitBtn = document.getElementById('book-dj-submit');
+  if (submitBtn) submitBtn.addEventListener('click', submitBookDJ);
+
+  // Trash interaction & keyboard dismiss
+  initVirusTrashInteraction();
+  initVirusKeyboardDismiss();
 }
 
 // ─── 9. Easter Egg — Breakout Game ───────────────────────────
@@ -1702,6 +2097,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initBreakoutWindow();
     initEasterEgg();
     initMapOfContent();
+    initVirusAlertSystem();
 
     const mocWindow = document.getElementById('moc-window');
     if (mocWindow) {

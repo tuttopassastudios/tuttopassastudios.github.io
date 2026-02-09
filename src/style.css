@@ -2135,3 +2135,322 @@ button:active, .mac-button:active {
     width: min(480px, calc(100vw - 120px)) !important;
   }
 }
+
+/* ═══════════════════════════════════════════
+   VIRUS ALERT / DJ PROMO SYSTEM
+   ═══════════════════════════════════════════ */
+
+/* --- Virus Folder Icon (red folder with warning) --- */
+.icon-virus-folder {
+  background: #cc3333;
+  border-radius: 0 2px 2px 2px;
+  box-shadow: inset -2px -2px 0 #992222, inset 2px 2px 0 #ee6666;
+}
+.icon-virus-folder::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 0;
+  width: 14px;
+  height: 6px;
+  background: #cc3333;
+  border: 1px solid #000;
+  border-bottom: none;
+  border-radius: 2px 2px 0 0;
+}
+.icon-virus-folder::after {
+  content: '⚠';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* --- Virus Alert Window --- */
+.virus-alert-content {
+  padding: 16px !important;
+}
+
+.virus-alert-body {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.virus-alert-icon {
+  font-size: 36px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.virus-alert-text {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.virus-alert-title {
+  font-weight: bold;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.virus-alert-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.virus-alert-disclaimer {
+  font-size: 9px;
+  color: #999;
+  text-align: center;
+  font-style: italic;
+}
+
+/* --- Virus Scan Overlay --- */
+#virus-scan-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #000;
+  z-index: 99998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+#virus-scan-overlay.hidden {
+  display: none;
+}
+
+.scan-terminal {
+  width: 100%;
+  max-width: 600px;
+  font-family: 'Courier New', 'Courier', monospace;
+  color: #00ff00;
+}
+
+.scan-header {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  text-align: center;
+  text-shadow: 0 0 8px #00ff00;
+}
+
+.scan-log {
+  height: 260px;
+  overflow-y: auto;
+  font-size: 12px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  padding: 8px;
+  border: 1px solid #00ff00;
+  background: rgba(0, 255, 0, 0.03);
+}
+
+.scan-log-line {
+  opacity: 0;
+  animation: scan-line-appear 0.3s ease forwards;
+}
+
+@keyframes scan-line-appear {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.scan-progress-container {
+  width: 100%;
+  height: 14px;
+  border: 1px solid #00ff00;
+  margin-bottom: 8px;
+  background: rgba(0, 255, 0, 0.05);
+}
+
+.scan-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: #00ff00;
+  box-shadow: 0 0 10px #00ff00, 0 0 20px rgba(0, 255, 0, 0.3);
+  transition: width 0.4s ease;
+}
+
+.scan-countdown {
+  font-size: 11px;
+  text-align: center;
+  margin-bottom: 16px;
+  color: #00cc00;
+}
+
+.scan-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.scan-buttons .mac-button {
+  background: #111;
+  color: #00ff00;
+  border-color: #00ff00;
+  box-shadow: none;
+}
+
+.scan-buttons .mac-button:hover {
+  background: #00ff00;
+  color: #000;
+  box-shadow: 0 0 10px #00ff00;
+}
+
+/* --- DJ Dispatch Window --- */
+.dispatch-content {
+  padding: 16px !important;
+}
+
+.dispatch-header {
+  font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.dispatch-scan-lines {
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.dispatch-scan-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  border-bottom: 1px dotted #ccc;
+  opacity: 0;
+  animation: scan-line-appear 0.3s ease forwards;
+}
+
+.dispatch-scan-label {
+  color: #666;
+}
+
+.dispatch-scan-value {
+  font-weight: bold;
+}
+
+.dispatch-result {
+  margin-top: 12px;
+}
+
+.dispatch-result.hidden {
+  display: none;
+}
+
+.dispatch-match {
+  font-weight: bold;
+  text-align: center;
+  margin: 8px 0;
+  font-size: 12px;
+}
+
+.dispatch-bass-label {
+  text-align: center;
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.dispatch-bass-options {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* --- Book a DJ Window --- */
+.book-dj-content {
+  padding: 16px !important;
+}
+
+.book-dj-actions {
+  text-align: right;
+  margin-top: 12px;
+}
+
+.book-dj-footer {
+  text-align: center;
+  font-size: 9px;
+  color: #999;
+  margin-top: 16px;
+  padding-top: 8px;
+  border-top: 1px solid #ddd;
+  font-style: italic;
+}
+
+/* Slide-in animation for Book DJ window */
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+.book-dj-slide-in {
+  animation: slide-in-right 0.4s ease-out;
+}
+
+/* Trash wobble animation */
+@keyframes trash-wobble {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-8deg); }
+  40% { transform: rotate(6deg); }
+  60% { transform: rotate(-4deg); }
+  80% { transform: rotate(2deg); }
+}
+
+.trash-wobble .icon-image {
+  animation: trash-wobble 0.5s ease;
+}
+
+/* --- Mobile overrides for virus system --- */
+@media (max-width: 767px) {
+  .virus-alert-buttons {
+    flex-direction: column;
+  }
+
+  .virus-alert-buttons .mac-button {
+    width: 100%;
+  }
+
+  #virus-scan-overlay {
+    padding: 16px;
+    overflow-y: auto;
+  }
+
+  .scan-log {
+    height: 180px;
+  }
+
+  .scan-buttons {
+    flex-direction: column;
+  }
+
+  .scan-buttons .mac-button {
+    width: 100%;
+  }
+
+  .dispatch-bass-options {
+    flex-direction: column;
+  }
+
+  .dispatch-bass-options .mac-button {
+    width: 100%;
+  }
+
+  /* Keep virus windows hidden on mobile until explicitly shown */
+  #virus-alert-window.hidden,
+  #dj-dispatch-window.hidden,
+  #book-dj-window.hidden {
+    display: none;
+  }
+}
