@@ -2453,4 +2453,45 @@ button:active, .mac-button:active {
   #book-dj-window.hidden {
     display: none;
   }
+
+  /* No virus popups on mobile */
+  .virus-popup {
+    display: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   VIRUS POPUP FLOOD
+   ═══════════════════════════════════════════ */
+
+.virus-popup {
+  position: absolute;
+  width: 260px;
+  min-height: auto;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+  pointer-events: auto;
+  animation: popup-shake 0.3s ease;
+}
+
+.virus-popup .window-content.virus-popup-body {
+  padding: 8px;
+  font-size: 11px;
+}
+
+.virus-popup .virus-popup-msg {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.virus-popup .title-bar-text {
+  font-size: 11px;
+}
+
+@keyframes popup-shake {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-3px, 2px); }
+  40%  { transform: translate(3px, -2px); }
+  60%  { transform: translate(-2px, 1px); }
+  80%  { transform: translate(2px, -1px); }
+  100% { transform: translate(0, 0); }
 }

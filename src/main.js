@@ -152,6 +152,13 @@ function initWindowControls() {
   document.querySelectorAll('.close-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const win = btn.closest('.mac-window');
+      // Virus alert close → trigger popup flood
+      if (win.id === 'virus-alert-window') {
+        win.classList.add('hidden');
+        win.classList.remove('active');
+        startVirusPopupFlood();
+        return;
+      }
       win.classList.add('hidden');
       win.classList.remove('active');
 
@@ -1473,6 +1480,116 @@ function initMapOfContent() {
 }
 
 // ─── 8b. Virus Alert / DJ Promo System ───────────────────────
+
+// Popup flood messages for the virus meltdown
+const VIRUS_POPUP_MESSAGES = [
+  { title: "You've Won a Free DJ!", msg: 'Click here to claim your complimentary turntablist.' },
+  { title: 'WARNING: Groove Levels Critical', msg: 'System grooviness exceeding safe thresholds.' },
+  { title: 'DJ Not Found (jk)', msg: "Just kidding. DJs are everywhere. You can't escape." },
+  { title: 'BassOverflow Exception', msg: 'Stack trace: drop \u2192 bass \u2192 drop \u2192 bass \u2192 drop' },
+  { title: 'Unhandled Party Exception', msg: 'Error 404: Chill not found.' },
+  { title: 'ALERT: Turntable Overheating', msg: 'Recommend immediate cooldown via sick drops.' },
+  { title: 'System Preferences Updated', msg: 'Default vibe has been set to: Absolutely Filthy.' },
+  { title: 'Disk Full of Bangers', msg: 'Please delete some mid tracks to free up space.' },
+  { title: 'New Hardware Detected', msg: 'Roland TR-808 is now managing your system clock.' },
+  { title: 'Kernel Panic (Dance Floor)', msg: 'Too many bodies on the dance floor. Rebooting groove.' },
+  { title: 'Software Update Available', msg: 'DJ OS 9.0.8.0.8 is ready to install. (808 get it?)' },
+  { title: 'AirDrop: Incoming Beat', msg: 'Someone nearby wants to share an unreleased banger.' },
+  { title: 'Print Job Cancelled', msg: 'Cannot print vibes. Vibes are wireless only.' },
+  { title: 'Clipboard Contains: Fire', msg: 'Last copied item is too hot. Handle with caution.' },
+  { title: 'Security Warning', msg: 'Your firewall has been replaced with a four-on-the-floor.' },
+];
+
+// Virus popup flood state
+let virusPopupFloodActive = false;
+let virusPopupTimers = [];
+let virusInactivityTimer = null;
+let virusPopupCount = 0;
+
+function startVirusPopupFlood() {
+  if (window.innerWidth < 768) return;
+  if (virusPopupFloodActive) return;
+  virusPopupFloodActive = true;
+  virusPopupCount = 0;
+
+  // Hide virus alert window
+  const alertWin = document.getElementById('virus-alert-window');
+  if (alertWin) {
+    alertWin.classList.add('hidden');
+    alertWin.classList.remove('active');
+  }
+
+  // Clear inactivity timer
+  clearTimeout(virusInactivityTimer);
+  virusInactivityTimer = null;
+
+  // Accelerating spawn schedule (~20 popups)
+  const delays = [0, 1500, 2800, 3800, 4600, 5200, 5600, 5900, 6100, 6300, 6450, 6600, 6750, 6850, 6950, 7050, 7150, 7250, 7350, 7450];
+  delays.forEach(delay => {
+    const t = setTimeout(() => {
+      if (virusPopupCount < 25) spawnVirusPopup();
+    }, delay);
+    virusPopupTimers.push(t);
+  });
+}
+
+function spawnVirusPopup() {
+  virusPopupCount++;
+  const desktop = document.getElementById('desktop');
+  if (!desktop) return;
+
+  const msg = VIRUS_POPUP_MESSAGES[Math.floor(Math.random() * VIRUS_POPUP_MESSAGES.length)];
+
+  // Random position within viewport with margins
+  const maxX = Math.max(60, window.innerWidth - 300);
+  const maxY = Math.max(60, window.innerHeight - 200);
+  const x = 40 + Math.floor(Math.random() * maxX);
+  const y = 60 + Math.floor(Math.random() * maxY);
+
+  const popup = document.createElement('div');
+  popup.className = 'mac-window virus-popup';
+  popup.style.left = x + 'px';
+  popup.style.top = y + 'px';
+  popup.innerHTML =
+    '<div class="window-title-bar">' +
+      '<div class="title-btn close-btn virus-popup-close"></div>' +
+      '<span class="title-bar-text">' + escapeHtml(msg.title) + '</span>' +
+    '</div>' +
+    '<div class="window-content virus-popup-body">' +
+      '<div class="virus-popup-msg">' + escapeHtml(msg.msg) + '</div>' +
+    '</div>';
+
+  desktop.appendChild(popup);
+  bringToFront(popup);
+  virusBeep();
+
+  // Wire close button — hydra effect
+  const closeBtn = popup.querySelector('.virus-popup-close');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      onVirusPopupClose(popup);
+    });
+  }
+}
+
+function onVirusPopupClose(popup) {
+  popup.remove();
+  // Hydra effect: spawn 2 more
+  spawnVirusPopup();
+  spawnVirusPopup();
+}
+
+function clearVirusPopupFlood() {
+  virusPopupTimers.forEach(t => clearTimeout(t));
+  virusPopupTimers = [];
+  document.querySelectorAll('.virus-popup').forEach(el => el.remove());
+  virusPopupFloodActive = false;
+  virusPopupCount = 0;
+  clearTimeout(virusInactivityTimer);
+  virusInactivityTimer = null;
+}
+
 const VIRUS_SCAN_LINES = [
   '> Scanning /System/Library/Funk...',
   '> WARNING: disco_ball.dll loaded into memory',
@@ -1555,6 +1672,10 @@ function virusScratch() {
 function triggerVirusAlert() {
   virusBeep();
   openWindow('virus-alert-window');
+
+  // Start inactivity timer — flood if user ignores for ~8s
+  clearTimeout(virusInactivityTimer);
+  virusInactivityTimer = setTimeout(startVirusPopupFlood, 8000);
 }
 
 let scanTimers = [];
@@ -1802,14 +1923,23 @@ function initVirusKeyboardDismiss() {
     const dispatchWin = document.getElementById('dj-dispatch-window');
     const bookWin = document.getElementById('book-dj-window');
 
-    const anyOpen = !overlay.classList.contains('hidden') ||
-      !alertWin.classList.contains('hidden') ||
-      !dispatchWin.classList.contains('hidden') ||
-      !bookWin.classList.contains('hidden');
+    const overlayOpen = !overlay.classList.contains('hidden');
+    const alertOpen = !alertWin.classList.contains('hidden');
+    const dispatchOpen = !dispatchWin.classList.contains('hidden');
+    const bookOpen = !bookWin.classList.contains('hidden');
+    const anyOpen = overlayOpen || alertOpen || dispatchOpen || bookOpen;
 
     if (!anyOpen) return;
 
     e.preventDefault();
+
+    // If ONLY the virus alert is open (no scan/dispatch/book), trigger popup flood
+    if (alertOpen && !overlayOpen && !dispatchOpen && !bookOpen) {
+      alertWin.classList.add('hidden');
+      alertWin.classList.remove('active');
+      startVirusPopupFlood();
+      return;
+    }
 
     // Close all virus windows
     closeScanOverlay();
@@ -1834,9 +1964,21 @@ function initVirusAlertSystem() {
   const btnAllow = document.getElementById('virus-btn-allow');
   const btnDispatch = document.getElementById('virus-btn-dispatch');
 
-  if (btnCleaner) btnCleaner.addEventListener('click', startVirusScan);
-  if (btnAllow) btnAllow.addEventListener('click', startVirusScan);
-  if (btnDispatch) btnDispatch.addEventListener('click', startVirusScan);
+  if (btnCleaner) btnCleaner.addEventListener('click', () => {
+    clearTimeout(virusInactivityTimer);
+    virusInactivityTimer = null;
+    startVirusScan();
+  });
+  if (btnAllow) btnAllow.addEventListener('click', () => {
+    clearTimeout(virusInactivityTimer);
+    virusInactivityTimer = null;
+    startVirusScan();
+  });
+  if (btnDispatch) btnDispatch.addEventListener('click', () => {
+    clearTimeout(virusInactivityTimer);
+    virusInactivityTimer = null;
+    startVirusScan();
+  });
 
   // Wire scan overlay buttons
   const scanOk = document.getElementById('scan-btn-ok');
