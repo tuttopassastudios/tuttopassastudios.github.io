@@ -1606,6 +1606,10 @@ function startVirusPopupFlood() {
 
 function spawnVirusPopup() {
   virusPopupCount++;
+  if (virusPopupCount >= 25) {
+    triggerBSOD();
+    return;
+  }
   const desktop = document.getElementById('desktop');
   if (!desktop) return;
 
@@ -1659,6 +1663,101 @@ function clearVirusPopupFlood() {
   virusPopupCount = 0;
   clearTimeout(virusInactivityTimer);
   virusInactivityTimer = null;
+}
+
+function triggerBSOD() {
+  // Stop all pending popup timers
+  virusPopupTimers.forEach(t => clearTimeout(t));
+  virusPopupTimers = [];
+
+  // Remove all virus popups
+  document.querySelectorAll('.virus-popup').forEach(el => el.remove());
+
+  // Play crash sound
+  try {
+    if (!virusAudioCtx) virusAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = virusAudioCtx.currentTime;
+    // White noise burst
+    const bufferSize = virusAudioCtx.sampleRate * 0.5;
+    const noiseBuffer = virusAudioCtx.createBuffer(1, bufferSize, virusAudioCtx.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.3;
+    const noise = virusAudioCtx.createBufferSource();
+    noise.buffer = noiseBuffer;
+    const noiseGain = virusAudioCtx.createGain();
+    noiseGain.gain.setValueAtTime(0.15, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+    noise.connect(noiseGain);
+    noiseGain.connect(virusAudioCtx.destination);
+    noise.start(now);
+    noise.stop(now + 0.5);
+    // Low thud
+    const osc = virusAudioCtx.createOscillator();
+    const oscGain = virusAudioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(120, now);
+    osc.frequency.exponentialRampToValueAtTime(30, now + 0.4);
+    oscGain.gain.setValueAtTime(0.2, now);
+    oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+    osc.connect(oscGain);
+    oscGain.connect(virusAudioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.4);
+  } catch (_) {}
+
+  // Create BSOD overlay
+  const bsod = document.createElement('div');
+  bsod.id = 'bsod-screen';
+
+  const bsodText =
+    'TUTTO_PASSA_OS\n\n' +
+    'A fatal exception 0x0808 has occurred at GROOVE:SECTOR_4\n\n' +
+    'BASSOVERFLOW \u2014 The system has detected dangerously high levels\n' +
+    'of unresolved funk in the main party buffer.\n\n' +
+    '*  Press any key to reboot the vibe.\n' +
+    '*  Press CTRL+ALT+DROP to resume the party.\n\n' +
+    'Error code: TOO_MANY_BANGERS_IN_PIPELINE';
+
+  const textEl = document.createElement('pre');
+  textEl.className = 'bsod-text';
+  bsod.appendChild(textEl);
+
+  const restartEl = document.createElement('div');
+  restartEl.className = 'bsod-restart';
+  restartEl.textContent = 'Press any key to restart...';
+  bsod.appendChild(restartEl);
+
+  document.body.appendChild(bsod);
+
+  // Typing animation
+  let charIndex = 0;
+  const typeInterval = setInterval(() => {
+    if (charIndex <= bsodText.length) {
+      textEl.textContent = bsodText.slice(0, charIndex);
+      charIndex++;
+    } else {
+      clearInterval(typeInterval);
+      restartEl.classList.add('visible');
+    }
+  }, 30);
+
+  // Dismiss handler
+  function dismissBSOD() {
+    clearInterval(typeInterval);
+    bsod.classList.add('bsod-fadeout');
+    document.removeEventListener('keydown', dismissBSOD);
+    document.removeEventListener('click', dismissBSOD);
+    setTimeout(() => {
+      bsod.remove();
+      clearVirusPopupFlood();
+    }, 600);
+  }
+
+  // Delay listener slightly so the triggering click doesn't dismiss immediately
+  setTimeout(() => {
+    document.addEventListener('keydown', dismissBSOD);
+    document.addEventListener('click', dismissBSOD);
+  }, 300);
 }
 
 const VIRUS_SCAN_LINES = [

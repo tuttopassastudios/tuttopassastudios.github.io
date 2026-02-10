@@ -2484,6 +2484,11 @@ button:active, .mac-button:active {
   .virus-popup {
     display: none !important;
   }
+
+  /* No BSOD on mobile */
+  #bsod-screen {
+    display: none !important;
+  }
 }
 
 /* ═══════════════════════════════════════════
@@ -2520,4 +2525,76 @@ button:active, .mac-button:active {
   60%  { transform: translate(-2px, 1px); }
   80%  { transform: translate(2px, -1px); }
   100% { transform: translate(0, 0); }
+}
+
+/* ═══════════════════════════════════════════
+   BLUE SCREEN OF DEATH
+   ═══════════════════════════════════════════ */
+
+#bsod-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #0000AA;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  animation: bsod-flicker 0.4s ease forwards;
+}
+
+#bsod-screen .bsod-text {
+  color: #ffffff;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  max-width: 640px;
+  width: 100%;
+  margin: 0;
+  border-right: 2px solid #ffffff;
+  animation: bsod-cursor 0.7s step-end infinite;
+}
+
+#bsod-screen .bsod-restart {
+  color: #aaaaaa;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  margin-top: 32px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+#bsod-screen .bsod-restart.visible {
+  opacity: 1;
+  animation: bsod-blink 1.2s step-end infinite;
+}
+
+#bsod-screen.bsod-fadeout {
+  animation: bsod-fadeout 0.6s ease forwards;
+}
+
+@keyframes bsod-flicker {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  25%  { opacity: 0.6; }
+  35%  { opacity: 1; }
+  45%  { opacity: 0.8; }
+  100% { opacity: 1; }
+}
+
+@keyframes bsod-cursor {
+  0%, 50% { border-right-color: #ffffff; }
+  51%, 100% { border-right-color: transparent; }
+}
+
+@keyframes bsod-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes bsod-fadeout {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
 }
