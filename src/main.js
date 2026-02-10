@@ -1049,6 +1049,18 @@ const DESKTOP_PATTERNS = [
   { name: 'Mono',   colors: ['#666666', '#888888'] },
 ];
 
+const REWARD_PATTERNS = [
+  { name: 'Neon Grid',  colors: ['#001a00', '#00ff41'] },
+  { name: 'Vaporwave',  colors: ['#ff71ce', '#01cdfe'] },
+  { name: 'Sunset',     colors: ['#8b1a1a', '#ff6600'] },
+  { name: 'Bliss',      image: '/images/bliss.png' },
+];
+
+function isVirusCleared() {
+  const rewards = safeParseJSON('tuttopassa-rewards', {});
+  return rewards.virusCleared === true;
+}
+
 function initControlPanels() {
   const patternsEl = document.getElementById('cp-patterns');
   const trailsCb = document.getElementById('cp-trails');
@@ -1078,6 +1090,8 @@ function initControlPanels() {
 
     patternsEl.appendChild(swatch);
   });
+
+  renderRewardSwatches();
 
   // Apply saved pattern
   if (prefs.pattern != null) applyDesktopPattern(prefs.pattern);
@@ -1120,12 +1134,69 @@ function initControlPanels() {
   });
 }
 
+function renderRewardSwatches() {
+  const patternsEl = document.getElementById('cp-patterns');
+  if (!patternsEl) return;
+
+  // Remove existing reward elements for re-render
+  patternsEl.querySelectorAll('.cp-reward-label, .cp-reward-swatch').forEach(el => el.remove());
+
+  const unlocked = isVirusCleared();
+  const prefs = safeParseJSON('tuttopassa-prefs', {});
+
+  // Divider label
+  const label = document.createElement('div');
+  label.className = 'cp-reward-label';
+  label.textContent = unlocked ? '🏆 Bonus' : '🔒 Bonus';
+  patternsEl.appendChild(label);
+
+  REWARD_PATTERNS.forEach((pat, i) => {
+    const index = DESKTOP_PATTERNS.length + i;
+    const swatch = document.createElement('div');
+    swatch.className = 'cp-pattern-swatch cp-reward-swatch';
+    if (pat.image) {
+      swatch.style.background = `url(${pat.image}) center/cover no-repeat`;
+    } else {
+      swatch.style.background = `repeating-conic-gradient(${pat.colors[0]} 0% 25%, ${pat.colors[1]} 0% 50%)`;
+      swatch.style.backgroundSize = '4px 4px';
+    }
+
+    if (!unlocked) {
+      swatch.classList.add('locked');
+      swatch.title = 'Clear Party Cache to unlock';
+    } else {
+      swatch.title = pat.name;
+      if ((prefs.pattern ?? 0) === index) swatch.classList.add('active');
+      swatch.addEventListener('click', () => {
+        patternsEl.querySelectorAll('.cp-pattern-swatch').forEach(s => s.classList.remove('active'));
+        swatch.classList.add('active');
+        applyDesktopPattern(index);
+        prefs.pattern = index;
+        localStorage.setItem('tuttopassa-prefs', JSON.stringify(prefs));
+      });
+    }
+
+    patternsEl.appendChild(swatch);
+  });
+}
+
 function applyDesktopPattern(index) {
-  const pat = DESKTOP_PATTERNS[index];
+  const pat = index < DESKTOP_PATTERNS.length
+    ? DESKTOP_PATTERNS[index]
+    : REWARD_PATTERNS[index - DESKTOP_PATTERNS.length];
   if (!pat) return;
   const desktop = document.getElementById('desktop');
-  desktop.style.backgroundColor = pat.colors[0];
-  desktop.style.backgroundImage = `repeating-conic-gradient(${pat.colors[0]} 0% 25%, ${pat.colors[1]} 0% 50%)`;
+  if (pat.image) {
+    desktop.style.backgroundColor = '';
+    desktop.style.backgroundImage = `url(${pat.image})`;
+    desktop.style.backgroundSize = 'cover';
+    desktop.style.backgroundPosition = 'center';
+  } else {
+    desktop.style.backgroundColor = pat.colors[0];
+    desktop.style.backgroundImage = `repeating-conic-gradient(${pat.colors[0]} 0% 25%, ${pat.colors[1]} 0% 50%)`;
+    desktop.style.backgroundSize = '';
+    desktop.style.backgroundPosition = '';
+  }
 }
 
 // ─── 6. Stickies ─────────────────────────────────────────────
@@ -1866,6 +1937,21 @@ function submitBookDJ() {
       document.getElementById('book-dj-email').value = '';
       document.getElementById('book-dj-date').value = '';
       document.getElementById('book-dj-notes').value = '';
+
+      // Grant virus reward
+      const rewards = safeParseJSON('tuttopassa-rewards', {});
+      if (!rewards.virusCleared) {
+        rewards.virusCleared = true;
+        localStorage.setItem('tuttopassa-rewards', JSON.stringify(rewards));
+        setTimeout(() => {
+          showAlert({
+            icon: '🏆',
+            message: 'Virus cleared! You\'ve unlocked 4 exclusive desktop patterns. Check your Control Panels!',
+            buttons: [{ label: 'Nice!', isDefault: true }],
+          });
+          renderRewardSwatches();
+        }, 400);
+      }
     }}],
   });
 }
